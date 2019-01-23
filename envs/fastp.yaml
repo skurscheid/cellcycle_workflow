@@ -1,0 +1,5 @@
+channels:
+ - bioconda
+dependencies:
+ - fastp=0.19.5
+ - zlib >=1.2.11,<1.3.0a0
