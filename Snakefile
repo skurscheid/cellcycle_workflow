@@ -11,7 +11,7 @@ REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"]
 RUN_ID = "N08851_SK_LR1807201_SEQ"
 PROJECT_ID = "LR1807201"
-dataDir = home + "/Data/Tremethick/CellCycle/"
+dataDir = "/Volumes/Data/Tremethick/CellCycle/"
 
 singularity: "docker://skurscheid/snakemake_baseimage:0.1"
 
@@ -24,7 +24,7 @@ localrules:
 
 home = os.environ['HOME']
 
-include_prefix = home + "rules/"
+include_prefix = "rules/"
 
 include:
     include_prefix + "run_fastp.smk"

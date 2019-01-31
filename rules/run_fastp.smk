@@ -19,6 +19,8 @@ from snakemake.exceptions import MissingInputException
 
 home = os.environ['HOME']
 
+singularity: "docker://skurscheid/snakemake_baseimage:0.1"
+
 rule run_fastp:
     conda:
         "envs/fastp.yaml"
