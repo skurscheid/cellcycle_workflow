@@ -1,0 +1,272 @@
+{
+  "references":
+    {
+    "active": "GRCh38",
+    "database":
+    {
+        "biomart": "ensembl",
+        "dataset": "hsapiens_gene_ensembl"
+    },
+    "GRCh38":
+    {
+      "ensemblHost": "asia.ensembl.org",
+      "version": ["GRCh38_ensembl84"],
+      "genome":
+      {
+        "GRCh38_ensembl84": "/Data/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/*.fa"
+      },
+      "bowtie2":
+      {
+        "GRCh38_ensembl84": "/Data/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/hg38_ensembl84"
+      }
+    }
+  },
+  "samples":
+  {
+    "ChIP-Seq":
+    {
+      "Project" : ["LR1807201"],
+      "LR1807201":
+      {
+      "runID": ["N08851_SK_LR1807201_SEQ"],
+      "N08851_SK_LR1807201_SEQ":
+      {
+        "ACTR6G1-1" : ["ACTR6G1-1_L2_1.fq.gz", "ACTR6G1-1_L2_2.fq.gz"],
+        "ACTR6G1-2" : ["ACTR6G1-2_L2_1.fq.gz", "ACTR6G1-2_L2_2.fq.gz"],
+        "ACTR6M-1" : ["ACTR6M-1_L2_1.fq.gz", "ACTR6M-1_L2_2.fq.gz"],
+        "ACTR6M-2" : ["ACTR6M-2_L2_1.fq.gz", "ACTR6M-2_L2_2.fq.gz"],
+        "ANP32G1-1" : ["ANP32G1-1_L2_1.fq.gz", "ANP32G1-1_L2_2.fq.gz"],
+        "ANP32G1-2" : ["ANP32G1-2_L2_1.fq.gz", "ANP32G1-2_L2_2.fq.gz"],
+        "ANP32M-1" : ["ANP32M-1_L2_1.fq.gz", "ANP32M-1_L2_2.fq.gz"],
+        "ANP32M-2" : ["ANP32M-2_L2_1.fq.gz", "ANP32M-2_L2_2.fq.gz"],
+        "H2AG1-1" : ["H2AG1-1_L2_1.fq.gz", "H2AG1-1_L2_2.fq.gz"],
+        "H2AG1-2" : ["H2AG1-2_L2_1.fq.gz", "H2AG1-2_L2_2.fq.gz"],
+        "H2AM-1" : ["H2AM-1_L2_1.fq.gz", "H2AM-1_L2_2.fq.gz"],
+        "H2AM-2" : ["H2AM-2_L2_1.fq.gz", "H2AM-2_L2_2.fq.gz"],
+        "H2AZG1-1" : ["H2AZG1-1_L2_1.fq.gz", "H2AZG1-1_L2_2.fq.gz"],
+        "H2AZG1-2" : ["H2AZG1-2_L2_1.fq.gz", "H2AZG1-2_L2_2.fq.gz"],
+        "H2AZM-1" : ["H2AZM-1_L2_1.fq.gz", "H2AZM-1_L2_2.fq.gz"],
+        "H2AZM-2" : ["H2AZM-2_L2_1.fq.gz", "H2AZM-2_L2_2.fq.gz"],
+        "INPUTG1-1" : ["INPUTG1-1_L2_1.fq.gz", "INPUTG1-1_L2_2.fq.gz"],
+        "INPUTG1-2" : ["INPUTG1-2_L2_1.fq.gz", "INPUTG1-2_L2_2.fq.gz"],
+        "INPUTM-1" : ["INPUTM-1_L2_1.fq.gz", "INPUTM-1_L2_2.fq.gz"],
+        "INPUTM-2" : ["INPUTM-2_L2_1.fq.gz", "INPUTM-2_L2_2.fq.gz"],
+        "TIP60G1-1" : ["TIP60G1-1_L2_1.fq.gz", "TIP60G1-1_L2_2.fq.gz"],
+        "TIP60G1-2" : ["TIP60G1-2_L2_1.fq.gz", "TIP60G1-2_L2_2.fq.gz"],
+        "TIP60M-1" : ["TIP60M-1_L2_1.fq.gz", "TIP60M-1_L2_2.fq.gz"],
+        "TIP60M-2" : ["TIP60M-2_L2_1.fq.gz", "TIP60M-2_L2_2.fq.gz"],
+        "WTG1-1" : ["WTG1-1_L2_1.fq.gz", "WTG1-1_L2_2.fq.gz"],
+        "WTG1-2" : ["WTG1-2_L2_1.fq.gz", "WTG1-2_L2_2.fq.gz"],
+        "WTM-1" : ["WTM-1_L2_1.fq.gz", "WTM-1_L2_2.fq.gz"],
+        "WTM-2" : ["WTM-2_L2_1.fq.gz", "WTM-2_L2_2.fq.gz"],
+        "YL1G1-1" : ["YL1G1-1_L2_1.fq.gz", "YL1G1-1_L2_2.fq.gz"],
+        "YL1G1-2" : ["YL1G1-2_L2_1.fq.gz", "YL1G1-2_L2_2.fq.gz"],
+        "YL1M-1" : ["YL1M-1_L2_1.fq.gz", "YL1M-1_L2_2.fq.gz"],
+        "YL1M-2" : ["YL1M-2_L2_1.fq.gz", "YL1M-2_L2_2.fq.gz"]
+      }
+    },
+    "replicates":
+    {
+      "N08851_SK_LR1807201_SEQ":
+      {
+        "ACTR6G1" : ["ACTR6G1-1", "ACTR6G1-2"],
+        "ACTR6M" : ["ACTR6M-1", "ACTR6M-2"],
+        "ANP32G1" : ["ANP32G1-1", "ANP32G1-2"],
+        "ANP32M" : ["ANP32M-1", "ANP32M-2"],
+        "H2AG1" : ["H2AG1-1", "H2AG1-2"],
+        "H2AM" : ["H2AM-1", "H2AM-2"],
+        "H2AZG1" : ["H2AZG1-1", "H2AZG1-2"],
+        "H2AZM" : ["H2AZM-1", "H2AZM-2"],
+        "INPUTG1" : ["INPUTG1-1", "INPUTG1-2"],
+        "INPUTM" : ["INPUTM-1", "INPUTM-2"],
+        "TIP60G1" : ["TIP60G1-1", "TIP60G1-2"],
+        "TIP60M" : ["TIP60M-1", "TIP60M-2"],
+        "WTG1" : ["WTG1-1", "WTG1-2"],
+        "WTM" : ["WTM-1", "WTM-2"],
+        "YL1G1" : ["YL1G1-1", "YL1G1-2"],
+        "YL1M" : ["YL1M-1", "YL1M-2"]
+      }
+    },
+    "conditions" :
+    {
+      "N08851_SK_LR1807201_SEQ" :
+      {
+        "M" :
+        {
+          "ChIP" :
+          {
+            "ACTR6M" : ["ACTR6M-1", "ACTR6M-2"],
+            "ANP32M" : ["ANP32M-1", "ANP32M-2"],
+            "H2AM" : ["H2AM-1", "H2AM-2"],
+            "H2AZM" : ["H2AZM-1", "H2AZM-2"],
+            "TIP60M" : ["TIP60M-1", "TIP60M-2"],
+            "WTM" : ["WTM-1", "WTM-2"],
+            "YL1M" : ["YL1M-1", "YL1M-2"]
+          },
+          "Input" :
+          {
+            "INPUTM" : ["INPUTM-1", "INPUTM-2"]
+          }
+        },
+        "G1" :
+        {
+          "ChIP" :
+          {
+            "ACTR6G1" : ["ACTR6G1-1", "ACTR6G1-2"],
+            "ANP32G1" : ["ANP32G1-1", "ANP32G1-2"],
+            "H2AG1" : ["H2AG1-1", "H2AG1-2"],
+            "H2AZG1" : ["H2AZG1-1", "H2AZG1-2"],
+            "TIP60G1" : ["TIP60G1-1", "TIP60G1-2"],
+            "WTG1" : ["WTG1-1", "WTG1-2"],
+            "YL1G1" : ["YL1G1-1", "YL1G1-2"]
+          },
+          "Input" :
+          {
+            "INPUTG1" : ["INPUTG1-1", "INPUTG1-2"]
+          }
+        }
+      }
+    }
+  }
+  },
+  "program_parameters":
+  {
+  "bt2_params":
+  {
+      "max_insert": ["500"],
+      "threads": ["7"],
+      "platform": ["Illumina"]
+  },
+  "bt2_params_unmapped_reads":
+  {
+        "max_insert": ["500"],
+        "threads": ["8"],
+        "platform": ["Illumina"]
+    },
+    "macs2" :
+    {
+      "binary" : "/miniconda3/envs/py27/bin/macs2",
+      "gsize" : "hs",
+      "verbosity" : "3"
+    },
+    "deepTools":
+    {
+      "SES_sample_length": ["1000"],
+      "SES_numer_of_samples": ["10000000.0"],
+      "ignoreForNormalization": ["MT X"],
+      "binSize": ["10000"],
+      "threads": "8",
+      "deepTools_dir": "/miniconda3/envs/deepTools/bin",
+      "regionFiles":
+      {
+        "GRCm38_ensembl93":
+        {
+          "allGenes": "/Data/References/Annotations/Mus_musculus/GRCm38_ensembl93/allGenes.bed",
+          "allExons": "/Data/References/Annotations/Mus_musculus/GRCm38_ensembl93/allExons.bed",
+          "allIntrons": "/Data/References/Annotations/Mus_musculus/GRCm38_ensembl93/allIntrons.bed",
+          "upRegulatedGenes" : "/Data/References/Annotations/Mus_musculus/GRCm38_ensembl93/upRegulatedGenesTALENMice.bed",
+          "downRegulatedGenes" : "/Data/References/Annotations/Mus_musculus/GRCm38_ensembl93/downRegulatedGenesTALENMice.bed"
+        },
+        "GRCh38_ensembl84":
+        {
+          "allGenes": "/Data/References/Annotations/Homo_sapiens/GRCh38_ensembl84/allGenes.bed"
+        }
+      },
+      "bamCoverage":
+      {
+        "MNase":
+        {
+          "--binSize": "1",
+          "--smoothLength": "30"
+        },
+        "normal":
+        {
+          "--centerReads": " ",
+          "--binSize": "100",
+          "--smoothLength": "150"
+        }
+      },
+      "bamCompare":
+      {
+        "MNase":
+        {
+          "--binSize": "1",
+          "--smoothLength": "30"
+        },
+        "normal":
+        {
+          "--centerReads": " ",
+          "--binSize": "100",
+          "--smoothLength": "150"
+        }
+      },
+      "computeMatrix":
+      {
+        "scale-regions":
+        {
+          "default":
+          {
+            "--upstream": "3000",
+            "--downstream": "3000",
+            "--regionBodyLength": "5000",
+            "--unscaled5prime": "200",
+            "--unscaled3prime": "200"
+          },
+          "coding":
+          {
+            "--upstream": "3000",
+            "--downstream": "3000",
+            "--regionBodyLength": "5000",
+            "--unscaled5prime": "200",
+            "--unscaled3prime": "200"
+          },
+          "noncoding":
+          {
+            "--upstream": "0",
+            "--downstream": "0",
+            "--regionBodyLength": "20000",
+            "--unscaled5prime": "0",
+            "--unscaled3prime": "0"
+          }
+        },
+        "reference-point":
+        {
+          "--upstream": "1500",
+          "--downstream": "1500",
+          "--referencePoint": ""
+        }
+      }
+    },
+      "picard_tools":
+      {
+        "jar": "/bin/picard.jar",
+        "CollectInsertSizeMetrics":
+        {
+            "minimum_perc": "0.1"
+        }
+      },
+      "fastp" :
+      {
+        "fastp_bin" : "/miniconda3/bin/fastp"
+      },
+      "igvtools" :
+      {
+        "igvtools_bin" : "/miniconda3/envs/igv/bin/igvtools"
+      },
+      "bowtie2":
+      {
+        "threads": "8",
+        "max_insert": "500"
+      }
+    },
+  "trim_dir": "trimmed_data",
+  "processed_dir": "processed_data",
+  "aligned_dir": "aligned_data",
+  "reports_dir": "reports",
+  "temp_dir": "/temp_data",
+  "alignment_quality": "10",
+  "raw_dir": "fastq",
+  "cutadapt_dir": "/miniconda3/envs/snakemake/bin",
+  "HTSeq_dir": "/miniconda3/envs/py27/bin",
+  "DEXSeq_dir": "/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/"
+}
