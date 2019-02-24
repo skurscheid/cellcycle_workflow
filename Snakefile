@@ -11,9 +11,10 @@ REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"]
 RUN_ID = "N08851_SK_LR1807201_SEQ"
 PROJECT_ID = "LR1807201"
-dataDir = "/Volumes/Data/Tremethick/CellCycle/"
+dataDir = "/data/cellcycledata/"
 
-singularity: "docker://skurscheid/snakemake_baseimage:0.1"
+#singularity: "docker://skurscheid/snakemake_baseimage:0.1"
+singularity: "docker://continuumio/miniconda3:4.4.10"
 
 rule:
     version:
@@ -47,14 +48,14 @@ rule execute_collectInsertSize:
 
 rule execute_fastp:
     input:
-        expand("{assayType}/{project}/{runID}/fastp/trimmed/{library}.{suffix}",
+        expand(dataDir + "{assayType}/{project}/{runID}/fastp/trimmed/{library}.{suffix}",
                assayType = "ChIP-Seq",
                project = PROJECT_ID,
                reference_version = REF_VERSION,
                runID = RUN_ID,
                library = [x for x in config["samples"]["ChIP-Seq"]["LR1807201"]["N08851_SK_LR1807201_SEQ"].keys()],
 	           suffix = ["end1.fastq.gz", "end2.fastq.gz"]),
-        expand("{assayType}/{project}/{runID}/fastp/report/{library}.{suffix}",
+        expand(dataDir + "{assayType}/{project}/{runID}/fastp/report/{library}.{suffix}",
                assayType = "ChIP-Seq",
                project = PROJECT_ID,
                reference_version = REF_VERSION,
