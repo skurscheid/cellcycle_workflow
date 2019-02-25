@@ -11,6 +11,7 @@ REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"]
 RUN_ID = "N08851_SK_LR1807201_SEQ"
 PROJECT_ID = "LR1807201"
+ASSAY_TYPE = "ChIP-Seq"
 dataDir = "/data/cellcycledata/"
 
 #singularity: "docker://skurscheid/snakemake_baseimage:0.1"
@@ -91,6 +92,23 @@ rule execute_deepTools_QC:
                condition = ["G1", "M"],
                suffix = ["png", "tab"])
 
+rule execute_deepTools_data_prep:
+    input:
+        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip_library}_{condition}_RPKM.bw",
+               assayType = ASSAY_TYPE,
+               project = PROJECT_ID,
+               runID = RUN_ID,
+               reference_version = REF_VERSION,
+               chip_library = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "WTM", "YL1M"],
+               condition = "M"),
+        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip_library}_G1_RPKM.bw",
+               assayType = ASSAY_TYPE,
+               project = PROJECT_ID,
+               runID = RUN_ID,
+               reference_version = REF_VERSION,
+               chip_library = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "WTG1", "YL1G1"],
+               condition = "G1")
+        
 
 rule execute_deepTools_plotting:
     input:

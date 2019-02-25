@@ -65,6 +65,16 @@
         "YL1M-2" : ["YL1M-2_L2_1.fq.gz", "YL1M-2_L2_2.fq.gz"]
       }
     },
+    "libraries" :
+    {
+      "LR1807201":
+      {
+        "N08851_SK_LR1807201_SEQ":
+        {
+          "input_libraries" : "input_libraries.csv"
+        }
+      }
+      },
     "replicates":
     {
       "N08851_SK_LR1807201_SEQ":
