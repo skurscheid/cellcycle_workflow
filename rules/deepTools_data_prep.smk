@@ -45,6 +45,17 @@ def cli_parameters_bamCoverage(wildcards):
             b = b + f
     return(b.rstrip())
 
+def get_input_libary(wildcards):
+    libraries = config[wildcards["assayType"]]["samples"]["conditions"][wildcards["runID"]][wildcards["conditions"]]["Input"].keys()
+    b = expand("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}_{condition}.bam",
+               assayType = wildcards["assayType"],
+               project = wildcards["project"],
+               runID = wildcards["runID"],
+               reference_version = wildcards["reference_version"],
+               library = libraries,
+               condition = wildcards["condition"])
+    return(b)
+
 rule bamCoverage_normal:
     version:
         1
@@ -91,9 +102,9 @@ rule bamCompare:
         8
     input:
         chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam"
-        input = "{assayType}/{project}/{runID}/bamtools/merge/{reference_version}/{mergedLibrary}_{condition}.bam"
+        input = get_input_library
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip_library}_{condition}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{input}_{condition}_RPKM.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip}\
