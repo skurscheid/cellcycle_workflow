@@ -90,10 +90,10 @@ rule bamCompare:
     threads:
         8
     input:
-        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam"
-        input = "{assayType}/{project}/{runID}/bamtools/merge/{reference_version}/{mergedLibrary}_{condition}.bam"
+        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam",
+        input = "{assayType}/{project}/{runID}/bamtools/merge/{reference_version}/{input}_{condition}.bam"
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip_library}_{condition}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{input}_{condition}_RPKM.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip}\
