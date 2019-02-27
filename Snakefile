@@ -28,14 +28,14 @@ home = os.environ['HOME']
 
 include_prefix = home + "/Development/JCSMR-Tremethick-Lab/cellcycle_workflow/rules/"
 
-include:
-    include_prefix + "run_fastp.smk"
-include:
-    include_prefix + "run_alignment.smk"
-include:
-    include_prefix + "deepTools_QC.smk"
-include:
-    include_prefix + "deepTools_plotting.smk"
+#include:
+#    include_prefix + "run_fastp.smk"
+#include:
+#    include_prefix + "run_alignment.smk"
+#include:
+#    include_prefix + "deepTools_QC.smk"
+#include:
+#    include_prefix + "deepTools_plotting.smk"
 include:
     include_prefix + "deepTools_data_prep.smk"
 
@@ -96,20 +96,22 @@ rule execute_deepTools_QC:
 
 rule execute_deepTools_data_prep:
     input:
-        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{input}_{condition}_RPKM.bw",
+        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{input}_{condition}_RPKM.bw",
                assayType = ASSAY_TYPE,
                project = PROJECT_ID,
                runID = RUN_ID,
                reference_version = REF_VERSION,
                chip = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "WTM", "YL1M"],
+               replicate = ["1", "2"],
                input = "InputG1_G1",
                condition = "M"),
-        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{input}_{condition}_RPKM.bw",
+        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{input}_{condition}_RPKM.bw",
                assayType = ASSAY_TYPE,
                project = PROJECT_ID,
                runID = RUN_ID,
                reference_version = REF_VERSION,
                chip = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "WTG1", "YL1G1"],
+               replicate = ["1", "2"],
                input = "InputM_M",
                condition = "G1")
         

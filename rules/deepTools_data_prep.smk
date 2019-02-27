@@ -92,7 +92,7 @@ rule bamCompare:
     version:
         1
     conda:
-        "envs/deeptools.yaml"
+        "../envs/deeptools.yaml"
     params:
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
         outFileFormat = "bigwig",
@@ -102,17 +102,17 @@ rule bamCompare:
     threads:
         8
     input:
-        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam",
+        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}-{replicate}.bam",
         control = get_input_library
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{control}_{condition}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{control}_{condition}_RPKM.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip}\
                        --bamfile2 {input.control}\
                        --outFileName {output.bigwig}\
                        --outFileFormat bigwig\
-                       --normalizeUsing {params.normalizeUsing}\
+                       --normalizeUsingRPKM\
                        --ignoreForNormalization {params.ignore}\
                        --smoothLength {params.smoothLength}\
                        --binSize {params.binSize}   
