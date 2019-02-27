@@ -103,13 +103,13 @@ rule bamCompare:
         8
     input:
         chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam",
-        input = get_input_library
+        control = get_input_library
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{input}_{condition}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{control}_{condition}_RPKM.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip}\
-                       --bamfile2 {input.input}\
+                       --bamfile2 {input.control}\
                        --outFileName {output.bigwig}\
                        --outFileFormat bigwig\
                        --normalizeUsing {params.normalizeUsing}\
