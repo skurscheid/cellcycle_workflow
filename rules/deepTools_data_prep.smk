@@ -115,7 +115,8 @@ rule bamCompare:
                        --normalizeUsingRPKM\
                        --ignoreForNormalization {params.ignore}\
                        --smoothLength {params.smoothLength}\
-                       --binSize {params.binSize}   
+                       --binSize {params.binSize} \
+                       --numberOfProcessors {threads}
         """
 
 
