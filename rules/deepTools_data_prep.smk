@@ -46,7 +46,7 @@ def cli_parameters_bamCoverage(wildcards):
             b = b + f
     return(b.rstrip())
 
-def get_input_libary(wildcards):
+def get_input_library(wildcards):
     libraries = config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]][wildcards["condition"]]["Input"].keys()
     b = expand("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}_{condition}.bam",
                assayType = wildcards["assayType"],
