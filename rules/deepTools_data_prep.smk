@@ -6,6 +6,7 @@ __date__ = "2019-02-25"
 # coding: utf-8
 
 from snakemake.exceptions import MissingInputException
+from snakemake.io import expand
 import os
 home = os.environ['HOME']
 
@@ -101,7 +102,7 @@ rule bamCompare:
     threads:
         8
     input:
-        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam"
+        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}.bam",
         input = get_input_library
     output:
         bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}_vs_{input}_{condition}_RPKM.bw"

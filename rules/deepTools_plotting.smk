@@ -45,38 +45,6 @@ def cli_parameters_bamCoverage(wildcards):
             b = b + f
     return(b.rstrip())
 
-rule bamCoverage_normal:
-    version:
-        1
-    conda:
-        "envs/deeptools.yaml"
-    params:
-        deepTools_dir = home + config["program_parameters"]["deepTools"]["deepTools_dir"],
-        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        outFileFormat = "bigwig",
-        binSize = 10,
-        smoothLength = 30,
-        normalizeUsing = "RPKM",
-    threads:
-        32
-    input:
-        bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam",
-        index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam.bai"
-    output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{library}_RPKM.bw"
-    shell:
-        """
-        {params.deepTools_dir}/bamCoverage --bam {input.bam} \
-                                           --outFileName {output.bigwig} \
-                                           --outFileFormat {params.outFileFormat} \
-                                           --binSize {params.binSize} \
-                                           --smoothLength {params.smoothLength}\
-                                           --numberOfProcessors {threads} \
-                                           --normalizeUsing RPKM \
-                                           --extendReads \
-                                           --ignoreForNormalization {params.ignore}
-        """
-
 rule computeMatrix_scaled:
     version:
         "1"
