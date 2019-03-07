@@ -10,8 +10,8 @@ from snakemake.io import expand
 import os
 from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
 
-AS = AzureRemoteProvider(account_name='cellcycledata', 
-    account_key='7ApydEpm+D+rKHOWHRKWWkh2u7htBINJhXKQoX7BgxWJGSZYlCURIILdGxVffMTlcaVBHzYazMzJZt3g7xN8wQ==')
+AS = AzureRemoteProvider(account_name= config["account_name"], 
+    account_key=config["account_key"])
 
 
 
