@@ -124,6 +124,22 @@ rule execute_deepTools_plotting:
                region = ["allGenes"],
 	       suffix = "RPKM")
 
+rule callpeaks:
+    input:
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{cycle}/{treatment}",
+                assayType = "ChIP-Seq",
+                reference_version = REF_VERSION,
+                project = "LR1807201",
+                runID = "N08851_SK_LR1807201_SEQ",
+                cycle = ["G1"],
+                treatment = [x for x in config["samples"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()]),
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{cycle}/{treatment}",
+                assayType = "ChIP-Seq",
+                reference_version = REF_VERSION,
+                project = "LR1807201",
+                runID = "N08851_SK_LR1807201_SEQ",
+                cycle = ["M"],
+                treatment = [x for x in config["samples"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()]) 
 
 rule all:
     input:

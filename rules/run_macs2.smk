@@ -15,6 +15,11 @@ For use, include in your workflow.
 import os
 import fnmatch
 from snakemake.exceptions import MissingInputException
+from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
+
+# setup Azure Storage for remote access
+AS = AzureRemoteProvider(account_name= config["account_name"], 
+    account_key=config["account_key"])
 
 # set local variables
 REF_GENOME = config["references"]["active"]
@@ -32,12 +37,10 @@ rule macs2_callpeak:
         genomeSize = "mm"
         name = lambda wildcards: wildcards.treatment
     input:
-        treatment = "{assayType}/{project}/{runID}/samtools/rmdup/{treatment}.bam",
-        control = "{assayType}/{project}/{runID}/samtools/rmdup/Input.bam"
+        treatment = AS.remote("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{treatment}.bam"),
+        control = AS.remote("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam")
     output:
-        outDir = "{assayType}/{project}/{runID}/macs2/callpeak/{treatment}",
-        bed = "{assayType}/{project}/{runID}/macs2/callpeak/{treatment}_summits.bed",
-        xls = "{assayType}/{project}/{runID}/macs2/callpeak/{treatment}_peaks.xls"
+        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{cycle}/{treatment}")
     shell:
         """
             macs2 callpeak -f {params.fileType} \
