@@ -12,7 +12,7 @@ REF_VERSION = config["references"][REF_GENOME]["version"]
 RUN_ID = "N08851_SK_LR1807201_SEQ"
 PROJECT_ID = "LR1807201"
 ASSAY_TYPE = "ChIP-Seq"
-dataDir = "/data/cellcycledata/"
+#dataDir = "/data/cellcycledata/"
 
 #singularity: "docker://skurscheid/snakemake_baseimage:0.1"
 singularity: "docker://continuumio/miniconda3:4.4.10"
