@@ -8,7 +8,12 @@ __date__ = "2019-02-25"
 from snakemake.exceptions import MissingInputException
 from snakemake.io import expand
 import os
-home = os.environ['HOME']
+from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
+
+AS = AzureRemoteProvider(account_name='cellcycledata', 
+    account_key='7ApydEpm+D+rKHOWHRKWWkh2u7htBINJhXKQoX7BgxWJGSZYlCURIILdGxVffMTlcaVBHzYazMzJZt3g7xN8wQ==')
+
+
 
 """
 Rules for running deepTools analysis on ChIP-Seq data
@@ -102,8 +107,8 @@ rule bamCompare:
     threads:
         8
     input:
-        chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}-{replicate}.bam",
-        control = get_input_library
+        chip = AS.remote("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}-{replicate}.bam"),
+        control = AS.remote(get_input_library)
     output:
         bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{control}_{condition}_RPKM.bw"
     shell:
