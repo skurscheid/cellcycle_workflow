@@ -19,7 +19,7 @@ rule:
         "1.0"
 
 localrules:
-    all
+        all
 
 home = os.environ['HOME']
 
