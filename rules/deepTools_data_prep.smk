@@ -13,8 +13,6 @@ from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
 AS = AzureRemoteProvider(account_name= config["account_name"], 
     account_key=config["account_key"])
 
-
-
 """
 Rules for running deepTools analysis on ChIP-Seq data
 For usage, include this in your workflow.
