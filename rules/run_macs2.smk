@@ -34,13 +34,13 @@ rule macs2_callpeak:
         seed = "1234",
         fileType = "BAMPE",
         qvalCutoff = 0.99,
-        genomeSize = "mm"
+        genomeSize = "mm",
         name = lambda wildcards: wildcards.treatment
     input:
-        treatment = AS.remote("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{treatment}.bam"),
-        control = AS.remote("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam")
+        treatment = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{treatment}-{rep}.bam"),
+        control = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam")
     output:
-        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{cycle}/{treatment}")
+        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}")
     shell:
         """
             macs2 callpeak -f {params.fileType} \

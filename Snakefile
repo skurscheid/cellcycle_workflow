@@ -33,8 +33,10 @@ include_prefix = "rules/"
 #    include_prefix + "deepTools_QC.smk"
 #include:
 #    include_prefix + "deepTools_plotting.smk"
+#include:
+#    include_prefix + "deepTools_data_prep.smk"
 include:
-    include_prefix + "deepTools_data_prep.smk"
+      include_prefix + "run_macs2.smk"
 
 rule execute_collectInsertSize:
     input:
@@ -126,20 +128,22 @@ rule execute_deepTools_plotting:
 
 rule callpeaks:
     input:
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{cycle}/{treatment}",
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
-                treatment = [x for x in config["samples"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()]),
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{cycle}/{treatment}",
+                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+		rep = ["1", "2"]),
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
-                treatment = [x for x in config["samples"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()]) 
+                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                rep = ["1", "2"])
 
 rule all:
     input:
