@@ -7,7 +7,7 @@ __date__ = "2018-09-15"
 
 
 """
-Rules for aligning paired-end reads using bowtie2.
+Rules for performing macs2 peak calling on ChIP-Seq data.
 
 For use, include in your workflow.
 """
