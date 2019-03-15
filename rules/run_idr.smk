@@ -38,3 +38,21 @@ rule run_idr:
                 --use-best-multisummit-IDR\
                 --log-output-file
         """
+
+rule extract_idr_peaks:
+    version:
+        "1"
+    conda:
+        "../envs/pandas.yaml"
+    params:
+        globalIDRCutoff = ,
+        signalValue = 
+    input:
+        idr_file = rules.run_idr.output.results
+    output:
+        idr_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_idr.bed",
+        other_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_other.bed"
+    script:
+        "../scripts/extract_idr_peaks.py"
+
+    
