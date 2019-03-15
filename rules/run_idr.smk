@@ -36,5 +36,4 @@ rule run_idr:
                 --output-file-type narrowPeak\
                 --log-output-file {output.log}\
                 --use-best-multisummit-IDR\
-                --log-output-file
         """

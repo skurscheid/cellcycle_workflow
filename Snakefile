@@ -27,6 +27,8 @@ include_prefix = "rules/"
 
 include:
       include_prefix + "run_macs2.smk"
+include:
+      include_prefix + "run_idr.smk"
 
 rule callpeaks:
     input:
@@ -56,7 +58,7 @@ rule all:
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
-                suffix = ["narrowPeaks", "log"]),
+                suffix = ["narrowPeak", "log"]),
         expand("{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{treatment}/{treatment}_idr.{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
@@ -64,4 +66,4 @@ rule all:
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                suffix = ["narrowPeaks", "log"])
+                suffix = ["narrowPeak", "log"])
