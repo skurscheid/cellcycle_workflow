@@ -74,10 +74,10 @@ rule bamCoverage_normal:
     threads:
         32
     input:
-        bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam",
-        index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam.bai"
+        bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{library}.bam",
+        index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{library}.bam.bai"
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{library}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{cycle}/{library}_RPKM.bw"
     shell:
         """
         bamCoverage --bam {input.bam} \
@@ -105,10 +105,12 @@ rule bamCompare:
     threads:
         8
     input:
-        chip = AS.remote("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip}-{replicate}.bam"),
-        control = AS.remote(get_input_library)
+        treatment_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.bam",
+        treatment_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.bam.bai",
+        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
+        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{control}_{condition}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{treatment}-{rep}_RPKM.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip}\

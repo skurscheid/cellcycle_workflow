@@ -55,4 +55,9 @@ rule extract_idr_peaks:
     script:
         "../scripts/extract_idr_peaks.py"
 
+rule plot_idr_peaks:
+    version:
+        "1"
+    conda:
+        "../envs/deeptools"
     
