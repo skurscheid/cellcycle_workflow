@@ -54,9 +54,52 @@ rule extract_idr_peaks:
     script:
         "../scripts/extract_idr_peaks.py"
 
-rule plot_idr_peaks:
+rule compute_peaks_matrix_per_sample:
     version:
         "1"
     conda:
         "../envs/deeptools"
+    params:
+        beforeRegionStartLength = 1000,
+        afterRegionStartLength = 1000
+    threads:
+        16
+    input:
+        idr_peaks: rules.extract_idr_peaks.output.idr_peaks,
+        other_peaks: rules.extract_idr_peaks.output.other_peaks,
+        bigwig_file: "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{treatment}-{rep}_RPKM.bw"
+    output:
+        matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{treatment}-{rep}.gz",
+        bed = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{treatment}-{rep}.bed",
+    shell:
+        """
+            computeMatrix reference-point --scoreFileName {input.bigwig_file}\
+                                          --regionsFileName {input.idr_peaks} {input.other_peaks}\
+                                          --outFileName {output.matrix}\
+                                          --outFileSortedRegions {output.bed}\
+                                          --referencePoint center\
+                                          --beforeRegionStartLength {params.beforeRegionStartLength}\
+                                          --afterRegionStartLength {params.afterRegionStartLength}\
+                                          --smartLabels                             
+        """
+    
+rule plot_peaks_per_sample:
+    version:
+        "1"
+    conda:
+        "../envs/deeptools"
+    params:
+        averageTypeSummaryPlot = "std"
+    input:
+        matrix = rules.compute_peaks_matrix_per_sample.output.matrix
+    output:
+        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf"
+    shell:
+        """
+            plotHeatmap --matrixFile {input.matrix}\
+                        --outFileName {output.pdf}\
+                        --averageTypeSummaryPlot {params.averageTypeSummaryPlot}\
+                        --refPointLabel "Peak center"\
+                        --perGroup
+        """
     
