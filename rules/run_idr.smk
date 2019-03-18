@@ -44,8 +44,8 @@ rule extract_idr_peaks:
     conda:
         "../envs/pandas.yaml"
     params:
-        globalIDRCutoff = ,
-        signalValue = 
+        globalIDRCutoff = 1,
+        signalValue = 5
     input:
         idr_file = rules.run_idr.output.results
     output:
