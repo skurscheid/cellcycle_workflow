@@ -58,7 +58,7 @@ rule all:
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
-                suffix = ["_idr.bed", "_other.bed"]),
+                suffix = ["idr.bed", "other.bed"]),
         expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
@@ -66,4 +66,4 @@ rule all:
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                suffix = ["_idr.bed", "_other.bed"])
+                suffix = ["idr.bed", "other.bed"])
