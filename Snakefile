@@ -25,8 +25,10 @@ home = os.environ['HOME']
 
 include_prefix = "rules/"
 
+#include:
+#      include_prefix + "run_macs2.smk"
 include:
-      include_prefix + "run_macs2.smk"
+       include_prefix + "deepTools_data_prep.smk"
 include:
       include_prefix + "run_idr.smk"
 
@@ -68,18 +70,19 @@ rule idr:
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
                 suffix = ["idr.bed", "other.bed"])
 
-plot_peaks_per_sample_example:
-            expand("{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
-                   assayType = "ChIP-Seq",
-                   reference_version = REF_VERSION,
-                   project = "LR1807201",
-                   runID = "N08851_SK_LR1807201_SEQ",
-                   cycle = ["G1"],
-                   treatment = "ACTR6G1",
-                   rep = ["1", "2"],
-                   suffix = ["pdf"]),
+rule plot_peaks_per_sample_example:
+    input:
+        expand("{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
+                assayType = "ChIP-Seq",
+                reference_version = REF_VERSION,
+                project = "LR1807201",
+                runID = "N08851_SK_LR1807201_SEQ",
+                cycle = ["G1"],
+                treatment = "ACTR6G1",
+                rep = ["1", "2"],
+                suffix = ["pdf"])
 
-rule plot_peaks_per_sample:
+rule peaks_per_sample:
         input:
             expand("{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
                    assayType = "ChIP-Seq",

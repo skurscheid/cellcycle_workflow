@@ -58,16 +58,16 @@ rule compute_peaks_matrix_per_sample:
     version:
         "1"
     conda:
-        "../envs/deeptools"
+        "../envs/deeptools.yaml"
     params:
         beforeRegionStartLength = 1000,
         afterRegionStartLength = 1000
     threads:
         16
     input:
-        idr_peaks: rules.extract_idr_peaks.output.idr_peaks,
-        other_peaks: rules.extract_idr_peaks.output.other_peaks,
-        bigwig_file: "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{treatment}-{rep}_RPKM.bw"
+        idr_peaks = rules.extract_idr_peaks.output.idr_peaks,
+        other_peaks = rules.extract_idr_peaks.output.other_peaks,
+        bigwig_file = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{treatment}-{rep}_RPKM.bw"
     output:
         matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{treatment}-{rep}.gz",
         bed = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{treatment}-{rep}.bed",
@@ -87,7 +87,7 @@ rule plot_peaks_per_sample:
     version:
         "1"
     conda:
-        "../envs/deeptools"
+        "../envs/deeptools.yaml"
     params:
         averageTypeSummaryPlot = "std"
     input:
