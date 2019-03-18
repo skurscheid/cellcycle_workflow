@@ -27,6 +27,8 @@ include_prefix = "rules/"
 
 include:
       include_prefix + "run_macs2.smk"
+include:
+      include_prefix + "run_idr.smk"
 
 rule callpeaks:
     input:

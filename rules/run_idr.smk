@@ -36,7 +36,6 @@ rule run_idr:
                 --output-file-type narrowPeak\
                 --log-output-file {output.log}\
                 --use-best-multisummit-IDR\
-                --log-output-file
         """
 
 rule extract_idr_peaks:
@@ -45,8 +44,8 @@ rule extract_idr_peaks:
     conda:
         "../envs/pandas.yaml"
     params:
-        globalIDRCutoff = ,
-        signalValue = 
+        globalIDRCutoff = 1,
+        signalValue = 5
     input:
         idr_file = rules.run_idr.output.results
     output:
