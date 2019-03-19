@@ -1,12 +1,19 @@
 {
     "__default__" :
     {
-        "queue" : "all.q,hugemem.q",
+        "queue" : "all.q, hugemem.q",
         "virtual_free" : "48G",
         "h_vmem" : "48.1G",
         "threads" : 2,
-	       "std1_out_dir" : "/home/skurscheid/qsub_output",
-	        "error_out_dir" : "/home/skurscheid/qsub_error"
+        "std1_out_dir" : "/home/skurscheid/qsub_output",
+        "error_out_dir" : "/home/skurscheid/qsub_error"
+    },
+    "macs2_callpeak" :
+    {
+      "queue" : "all.q, hugemem.q",
+      "virtual_free" : "32G",
+      "h_vmem" : "32.1G",
+      "threads" : 1
     },
     "run_rnaseq_qc" :
     {

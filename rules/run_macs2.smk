@@ -27,50 +27,6 @@ AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
 REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"][0]
 
-rule download_treatment:
-    version:
-        "1"
-    input:
-        treatment = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam")
-    output:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam"
-    run:
-        shell("cp {input.treatment} {output}")
-
-rule index_treatment:
-    version:
-        "1"
-    conda:
-        "../envs/samtools.yaml"
-    input:
-        rules.download_treatment.output
-    output:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam.bai"
-    shell:
-        "samtools index {input} {output}"
-
-rule download_control:
-    version:
-        "1"
-    input:
-        control = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam")
-    output:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam"
-    run:
-        shell("cp {input.control} {output}")
-
-rule index_control:
-    version:
-        "1"
-    conda:
-        "../envs/samtools.yaml"
-    input:
-        rules.download_control.output
-    output:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
-    shell:
-        "samtools index {input} {output}"
-
 rule macs2_callpeak:
     conda:
         "../envs/macs2.yaml"
@@ -80,26 +36,25 @@ rule macs2_callpeak:
         seed = "1234",
         fileType = "BAMPE",
         qvalCutoff = 0.99,
-        genomeSize = "mm",
+        genomeSize = "hs",
         name = lambda wildcards: wildcards.chip_library
     input:
-        treatment_bam = rules.download_treatment.output,
-        treatment_index = rules.index_treatment.output,
-        control_bam = rules.download_control.output,
-        control_index = rules.index_control.output
+        treatment_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam",
+        treatment_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam.bai",
+        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/INPUT{cycle}_{cycle}.bam",
+        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/INPUT{cycle}_{cycle}.bam.bai"
     output:
         outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{rep}")
     shell:
         """
-            macs2 callpeak -f {params.fileType} \
-                           -g hs\
+            macs2 callpeak -f {params.fileType}\
+                           -g {params.genomeSize}\
                            -t {input.treatment_bam}\
                            -c {input.control_bam}\
                            -n {params.name}\
                            --outdir {output.outDir}\
                            --call-summits\
-                           --qvalue {params.qvalCutoff}\
                            --bdg\
-                           --trackline\
-                           --tempdir /data/tmp
+                           --qvalue {params.qvalCutoff}\
+                           --tempdir tmp
         """

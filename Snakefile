@@ -21,42 +21,47 @@ ASSAY_TYPE = "ChIP-Seq"
 #singularity: "docker://skurscheid/snakemake_baseimage:0.1"
 #singularity: "docker://continuumio/miniconda3:4.4.10"
 
+wildcard_constraints:
+    chip_library = ".*?(?=\_)"
+
 rule:
     version:
         "1.0"
 
 localrules:
-        all, download_treatment, download_control
+       download_treatment, download_control
 
 home = os.environ['HOME']
 
 include_prefix = "rules/"
 
 include:
-      include_prefix + "run_macs2.smk"
-include:
-       include_prefix + "deepTools_data_prep.smk"
+      include_prefix + "deepTools_data_prep.smk"
 include:
       include_prefix + "run_idr.smk"
+include:
+      include_prefix + "run_macs2.smk"
+include:
+      include_prefix + "azure_rules.smk"
 
 rule callpeaks:
     input:
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}",
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
-		rep = ["1", "2"]),
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}",
+                suffix = ["1", "2"]),
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
                 treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                rep = ["1", "2"])
+                suffix = ["1", "2"])
 
 rule idr:
     input:
@@ -79,13 +84,13 @@ rule idr:
 
 rule plot_peaks_per_sample_example:
     input:
-        AS.remote( expand("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
+        AS.remote( expand("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{library}-{rep}.pdf",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
-                cycle = ["G1"],
-                treatment = "ACTR6G1",
+                cycle = ["M"],
+                library = "ACTR6M",
                 rep = ["1", "2"],
                 suffix = ["pdf"]) )
 
