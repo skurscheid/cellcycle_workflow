@@ -38,11 +38,11 @@ include_prefix = "rules/"
 include:
       include_prefix + "deepTools_data_prep.smk"
 include:
-      include_prefix + "run_idr.smk"
+      include_prefix + "azure_rules.smk"
 include:
       include_prefix + "run_macs2.smk"
 include:
-      include_prefix + "azure_rules.smk"
+      include_prefix + "run_idr.smk"
 
 rule callpeaks:
     input:
