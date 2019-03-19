@@ -1,0 +1,101 @@
+{
+    "__default__" :
+    {
+        "queue" : "all.q,hugemem.q",
+        "virtual_free" : "48G",
+        "h_vmem" : "48.1G",
+        "threads" : 2,
+	       "std1_out_dir" : "/home/skurscheid/qsub_output",
+	        "error_out_dir" : "/home/skurscheid/qsub_error"
+    },
+    "run_rnaseq_qc" :
+    {
+      "virtual_free" : "48G",
+      "h_vmem" : "48.1G",
+      "threads" : 2
+    },
+    "collect_insert_size_metrics" :
+    {
+      "virtual_free" : "48G",
+      "h_vmem" : "48.1G",
+      "threads" : 2
+    },
+    "run_htseq_count" :
+    {
+        "queue" : "all.q,hugemem.q",
+        "virtual_free" : "24",
+        "h_vmem" : "24.1G",
+        "threads" : 1
+    },
+    "fastqc" :
+    {
+        "virtual_free" : "48G",
+        "h_vmem" : "48.1G",
+        "threads" : 4
+    },
+    "star_align" :
+    {
+      "virtual_free" : "48G",
+      "h_vmem" : "48.1G",
+      "threads" : 4
+    },
+    "star_align_full" :
+    {
+      "virtual_free" : "48G",
+      "h_vmem" : "48.1G",
+      "threads" : 8
+    },
+    "run_rMats" :
+    {
+      "virtual_free" : "48G",
+      "h_vmem" : "48.1G",
+      "threads" : 1
+    },
+    "kallisto_quant" :
+    {
+        "virtual_free" : "48G",
+        "h_vmem" : "48.1G",
+        "threads" : 4
+    },
+    "kallisto_quant_pseudobam" :
+    {
+        "virtual_free" : "48G",
+        "h_vmem" : "48.1G",
+        "threads" : 5
+    },
+    "tophat_align" :
+    {
+        "virtual_free" : "48G",
+        "h_vmem" : "48.1G",
+        "threads" : 4
+    },
+    "bowtie2_pe" :
+    {
+        "threads" : 8
+    },
+    "bam_mark_duplicates" :
+    {
+        "virtual_free" : "48G",
+        "threads" : 1
+    },
+    "multiBamSummary" :
+    {
+        "virtual_free" : "48G",
+        "threads" : 12
+    },
+    "plotFingerprint" :
+    {
+        "virtual_free" : "48G",
+        "threads" : 8
+    },
+    "bamCompare" :
+    {
+        "virtual_free" : "48G",
+        "threads" : 8
+    },
+    "bamCoverage_MNase" :
+    {
+        "virtual_free" : "48G",
+        "threads" : 8
+    }
+}
