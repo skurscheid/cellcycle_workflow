@@ -80,7 +80,7 @@ rule compute_peaks_matrix_per_sample:
                                           --referencePoint center\
                                           --beforeRegionStartLength {params.beforeRegionStartLength}\
                                           --afterRegionStartLength {params.afterRegionStartLength}\
-                                          --smartLabels                             
+                                          --numberOfProcessors {threads}
         """
     
 rule plot_peaks_per_sample:
@@ -102,4 +102,14 @@ rule plot_peaks_per_sample:
                         --refPointLabel "Peak center"\
                         --perGroup
         """
+
+rule upload_plots:
+    version:
+         "1"
+    input:
+        rules.plot_peaks_per_sample.output.pdf
+    output:
+        AS.remote("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf")
+    run:
+        shell("mv {input} {output}")
     

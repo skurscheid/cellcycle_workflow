@@ -1,0 +1,15 @@
+name: ucsc_tools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - ca-certificates=2019.3.9
+  - libgcc-ng=7.3.0
+  - libpng=1.6.36
+  - libstdcxx-ng=7.3.0
+  - libuuid=2.32.1
+  - mysql-connector-c=6.1.11
+  - openssl=1.0.2r
+  - ucsc-bedgraphtobigwig=377
+  - zlib=1.2.11
