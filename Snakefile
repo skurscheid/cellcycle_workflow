@@ -4,6 +4,13 @@ __date__ = "2018-09-015"
 
 from snakemake.exceptions import MissingInputException
 import os
+from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
+
+# setup Azure Storage for remote access
+account_key=os.environ['AZURE_KEY']
+account_name=os.environ['AZURE_ACCOUNT']
+AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
+
 
 REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"]
@@ -72,7 +79,7 @@ rule idr:
 
 rule plot_peaks_per_sample_example:
     input:
-        expand("{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
+        AS.remote( expand("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
@@ -80,7 +87,7 @@ rule plot_peaks_per_sample_example:
                 cycle = ["G1"],
                 treatment = "ACTR6G1",
                 rep = ["1", "2"],
-                suffix = ["pdf"])
+                suffix = ["pdf"]) )
 
 rule peaks_per_sample:
         input:
