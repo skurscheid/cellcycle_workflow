@@ -19,14 +19,14 @@ rule:
         "1.0"
 
 localrules:
-        all
+        all, download_treatment, download_control
 
 home = os.environ['HOME']
 
 include_prefix = "rules/"
 
-#include:
-#      include_prefix + "run_macs2.smk"
+include:
+      include_prefix + "run_macs2.smk"
 include:
        include_prefix + "deepTools_data_prep.smk"
 include:

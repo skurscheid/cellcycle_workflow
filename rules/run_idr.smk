@@ -23,11 +23,11 @@ rule run_idr:
         "../envs/idr.yaml"
     params:
     input:
-        rep1 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-1/{treatment}_peaks.narrowPeak",
-        rep2 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-2/{treatment}_peaks.narrowPeak"
+        rep1 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-1/{treatment}_peaks.narrowPeak",
+        rep2 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-2/{treatment}_peaks.narrowPeak"
     output:
-        results = "{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{treatment}/{treatment}_idr.narrowPeak",
-        log = "{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{treatment}/{treatment}_idr.log"
+        results = "{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{chip_library}/{treatment}_idr.narrowPeak",
+        log = "{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{chip_library}/{treatment}_idr.log"
     shell:
         """
             idr --samples {input.rep1} {input.rep2}\
@@ -49,8 +49,8 @@ rule extract_idr_peaks:
     input:
         idr_file = rules.run_idr.output.results
     output:
-        idr_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_idr.bed",
-        other_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_other.bed"
+        idr_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}/{chip_library}_idr.bed",
+        other_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}/{chip_library}_other.bed"
     script:
         "../scripts/extract_idr_peaks.py"
 
@@ -67,10 +67,10 @@ rule compute_peaks_matrix_per_sample:
     input:
         idr_peaks = rules.extract_idr_peaks.output.idr_peaks,
         other_peaks = rules.extract_idr_peaks.output.other_peaks,
-        bigwig_file = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{treatment}-{rep}_RPKM.bw"
+        bigwig_file = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_RPKM.bw"
     output:
-        matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{treatment}-{rep}.gz",
-        bed = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{treatment}-{rep}.bed",
+        matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{chip_library}-{rep}.gz",
+        bed = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{chip_library}-{rep}.bed",
     shell:
         """
             computeMatrix reference-point --scoreFileName {input.bigwig_file}\
@@ -93,7 +93,7 @@ rule plot_peaks_per_sample:
     input:
         matrix = rules.compute_peaks_matrix_per_sample.output.matrix
     output:
-        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf"
+        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}.pdf"
     shell:
         """
             plotHeatmap --matrixFile {input.matrix}\

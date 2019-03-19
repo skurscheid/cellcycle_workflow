@@ -14,6 +14,7 @@ For use, include in your workflow.
 
 import os
 import fnmatch
+import snakemake
 from snakemake.exceptions import MissingInputException
 from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
 
@@ -30,19 +31,31 @@ rule download_treatment:
     version:
         "1"
     input:
-        treatment = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{treatment}-{rep}.{ext}")
+        treatment = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam")
     output:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.{ext}"
+        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam"
     run:
         shell("cp {input.treatment} {output}")
+
+rule index_treatment:
+    version:
+        "1"
+    conda:
+        "../envs/samtools.yaml"
+    input:
+        rules.download_treatment.output
+    output:
+        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam.bai"
+    shell:
+        "samtools index {input} {output}"
 
 rule download_control:
     version:
         "1"
     input:
-        control = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.{ext}")
+        control = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam")
     output:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.{ext}"
+        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam"
     run:
         shell("cp {input.control} {output}")
 
@@ -52,7 +65,7 @@ rule index_control:
     conda:
         "../envs/samtools.yaml"
     input:
-        "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam"
+        rules.download_control.output
     output:
         "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
     shell:
@@ -68,14 +81,14 @@ rule macs2_callpeak:
         fileType = "BAMPE",
         qvalCutoff = 0.99,
         genomeSize = "mm",
-        name = lambda wildcards: wildcards.treatment
+        name = lambda wildcards: wildcards.chip_library
     input:
-        treatment_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.bam",
-        treatment_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.bam.bai",
-        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
-        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
+        treatment_bam = rules.download_treatment.output,
+        treatment_index = rules.index_treatment.output,
+        control_bam = rules.download_control.output,
+        control_index = rules.index_control.output
     output:
-        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}")
+        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{rep}")
     shell:
         """
             macs2 callpeak -f {params.fileType} \
