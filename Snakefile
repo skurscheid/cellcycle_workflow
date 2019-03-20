@@ -33,7 +33,7 @@ localrules:
 
 home = os.environ['HOME']
 
-include_prefix = "rules/"
+include_prefix = "/home/skurscheid/workflows/cellcycle_workflow/rules/"
 
 include:
       include_prefix + "deepTools_data_prep.smk"
