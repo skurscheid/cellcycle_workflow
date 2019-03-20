@@ -27,23 +27,23 @@ AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
 REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"][0]
 
-rule download_treatment:
+rule download_chip_library:
     version:
         "1"
     input:
-        treatment = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam")
+        chip_library = AS.remote("experiment/{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam")
     output:
         "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam"
     run:
-        shell("mv {input.treatment} {output}")
+        shell("mv {input.chip_library} {output}")
 
-rule index_treatment:
+rule index_chip_library:
     version:
         "1"
     conda:
         "../envs/samtools.yaml"
     input:
-        rules.download_treatment.output
+        rules.download_chip_library.output
     output:
         "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam.bai"
     shell:

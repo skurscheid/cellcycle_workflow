@@ -29,14 +29,12 @@ rule:
         "1.0"
 
 localrules:
-       download_treatment, download_control
+       download_chip_library, download_control
 
 home = os.environ['HOME']
 
-include_prefix = "rules/"
+include_prefix = "./rules/"
 
-include:
-      include_prefix + "deepTools_data_prep.smk"
 include:
       include_prefix + "azure_rules.smk"
 include:
@@ -46,71 +44,53 @@ include:
 
 rule callpeaks:
     input:
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{suffix}",
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
-                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
                 suffix = ["1", "2"]),
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{suffix}",
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
-                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
                 suffix = ["1", "2"])
 
 rule idr:
     input:
-        expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_{suffix}",
+        expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}/{chip_library}_{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
-                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
                 suffix = ["idr.bed", "other.bed"]),
-        expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{treatment}/{treatment}_{suffix}",
+        expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}/{chip_library}_{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
-                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
                 suffix = ["idr.bed", "other.bed"])
-
-rule plot_peaks_per_sample_example:
-    input:
-        AS.remote( expand("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{library}-{rep}.pdf",
-                assayType = "ChIP-Seq",
-                reference_version = REF_VERSION,
-                project = "LR1807201",
-                runID = "N08851_SK_LR1807201_SEQ",
-                cycle = ["M"],
-                library = "ACTR6M",
-                rep = ["1", "2"],
-                suffix = ["pdf"]) )
 
 rule peaks_per_sample:
         input:
-            expand("{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
-                   assayType = "ChIP-Seq",
+            expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{reference_version}/G1/{chip_library}-{rep}.pdf",
                    reference_version = REF_VERSION,
-                   project = "LR1807201",
-                   runID = "N08851_SK_LR1807201_SEQ",
-                   cycle = ["G1"],
-                   treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
-                   rep = ["1", "2"],
-                   suffix = ["pdf"]),
-            expand("{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{treatment}-{rep}.pdf",
-                   assayType = "ChIP-Seq",
+                   chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                   rep = ["1", "2"]),
+            expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{reference_version}/M/{chip_library}-{rep}.pdf",
                    reference_version = REF_VERSION,
-                   project = "LR1807201",
-                   runID = "N08851_SK_LR1807201_SEQ",
-                   cycle = ["M"],
-                   treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                   rep = ["1", "2"],
-                   suffix = ["pdf"])
+                   chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                   rep = ["1", "2"])
+
+rule plot_peaks_per_sample_example:
+    input:
+        AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/ANP32G1-1.pdf")

@@ -15,6 +15,12 @@ For use, include in your workflow.
 import os
 import fnmatch
 from snakemake.exceptions import MissingInputException
+from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
+
+# setup Azure Storage for remote access
+account_key=os.environ['AZURE_KEY']
+account_name=os.environ['AZURE_ACCOUNT']
+AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
 
 rule run_idr:
     version: 
@@ -23,8 +29,8 @@ rule run_idr:
         "../envs/idr.yaml"
     params:
     input:
-        rep1 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-1/{chip_library}-1_peaks.narrowPeak",
-        rep2 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-2/{chip_library}-2_peaks.narrowPeak"
+        rep1 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-1/{chip_library}_peaks.narrowPeak",
+        rep2 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-2/{chip_library}_peaks.narrowPeak"
     output: 
         results = "{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{chip_library}_idr.narrowPeak"
     shell:
@@ -52,6 +58,39 @@ rule extract_idr_peaks:
         other_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}_other.bed"
     script:
         "../scripts/extract_idr_peaks.py"
+
+rule bamCompare:
+    version:
+        1
+    conda:
+        "../envs/deeptools.yaml"
+    params:
+        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
+        outFileFormat = "bigwig",
+        binSize = 25,
+        smoothLength = 50,
+        normalizeUsing = "RPKM",
+    threads:
+        8
+    input:
+        chip_library_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam",
+        chip_library_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam.bai",
+        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
+        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
+    output:
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_RPKM.bw"
+    shell:
+        """
+            bamCompare --bamfile1 {input.chip_library_bam}\
+                       --bamfile2 {input.control_bam}\
+                       --outFileName {output.bigwig}\
+                       --outFileFormat bigwig\
+                       --normalizeUsingRPKM\
+                       --ignoreForNormalization {params.ignore}\
+                       --smoothLength {params.smoothLength}\
+                       --binSize {params.binSize} \
+                       --numberOfProcessors {threads}
+        """
 
 rule compute_peaks_matrix_per_sample:
     version:
@@ -111,4 +150,16 @@ rule upload_plots:
         AS.remote("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}.pdf")
     run:
         shell("mv {input} {output}")
-    
+
+rule singleplot:
+    input:
+        AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/H2AZG1-1.pdf")
+
+rule allplots:
+    input:
+         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/{chip_library}-{rep}.pdf"),
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                rep = ["1", "2"]),
+         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/M/{chip_library}-{rep}.pdf"),
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                rep = ["1", "2"])

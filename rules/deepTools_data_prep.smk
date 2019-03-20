@@ -101,15 +101,15 @@ rule bamCompare:
     threads:
         8
     input:
-        treatment_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.bam",
-        treatment_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{treatment}-{rep}.bam.bai",
+        chip_library_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam",
+        chip_library_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam.bai",
         control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
         control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{treatment}-{rep}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_RPKM.bw"
     shell:
         """
-            bamCompare --bamfile1 {input.treatment_bam}\
+            bamCompare --bamfile1 {input.chip_library_bam}\
                        --bamfile2 {input.control_bam}\
                        --outFileName {output.bigwig}\
                        --outFileFormat bigwig\
