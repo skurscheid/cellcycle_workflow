@@ -1,7 +1,7 @@
 {
     "__default__" :
     {
-        "queue" : "all.q, hugemem.q",
+        "queue" : "all.q,hugemem.q",
         "virtual_free" : "48G",
         "h_vmem" : "48.1G",
         "threads" : 2,
@@ -10,7 +10,7 @@
     },
     "macs2_callpeak" :
     {
-      "queue" : "all.q, hugemem.q",
+      "queue" : "all.q,hugemem.q",
       "virtual_free" : "32G",
       "h_vmem" : "32.1G",
       "threads" : 1

@@ -27,6 +27,9 @@ AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
 REF_GENOME = config["references"]["active"]
 REF_VERSION = config["references"][REF_GENOME]["version"][0]
 
+localrules:
+    download_treatment, download_control
+
 rule download_treatment:
     version:
         "1"
