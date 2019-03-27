@@ -39,7 +39,7 @@ rule run_idr:
                 --input-file-type narrowPeak\
                 --output-file {output.results}\
                 --output-file-type narrowPeak\
-                --log-output-file {output.results}/log.txt\
+                --log-output-file {output.results}.log\
                 --use-best-multisummit-IDR\
         """
 
@@ -127,16 +127,16 @@ rule plot_peaks_per_sample:
     conda:
         "../envs/deeptools.yaml"
     params:
-        averageTypeSummaryPlot = "std"
+        averageTypeSummaryPlot = "mean"
     input:
         matrix = rules.compute_peaks_matrix_per_sample.output.matrix
     output:
-        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}.pdf"
+        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}-{summaryPlotType}.pdf"
     shell:
         """
             plotHeatmap --matrixFile {input.matrix}\
                         --outFileName {output.pdf}\
-                        --averageTypeSummaryPlot {params.averageTypeSummaryPlot}\
+                        --averageTypeSummaryPlot {wildcards.summaryPlotType}\
                         --refPointLabel "Peak center"\
                         --perGroup
         """
@@ -147,7 +147,7 @@ rule upload_plots:
     input:
         rules.plot_peaks_per_sample.output.pdf
     output:
-        AS.remote("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}.pdf")
+        AS.remote("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}-{summaryPlotType}.pdf")
     run:
         shell("mv {input} {output}")
 
@@ -157,9 +157,11 @@ rule singleplot:
 
 rule allplots:
     input:
-         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/{chip_library}-{rep}.pdf"),
+         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/{chip_library}-{rep}-{summaryPlotType}.pdf"),
                 chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
-                rep = ["1", "2"]),
-         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/M/{chip_library}-{rep}.pdf"),
+                rep = ["1", "2"],
+                summaryPlotType = "mean"),
+         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/M/{chip_library}-{rep}-{summaryPlotType}.pdf"),
                 chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                rep = ["1", "2"])
+                rep = ["1", "2"],
+                summaryPlotType = "mean")

@@ -120,4 +120,37 @@ rule bamCompare:
                        --numberOfProcessors {threads}
         """
 
+rule subtractWT:
+    version:
+        1
+    conda:
+        "../envs/deeptools.yaml"
+    params:
+    threads:
+        8
+    input:
+        chip_library_bw = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{chip_library}-{rep}_RPKM.bw",
+        wt_bw = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/WT{cycle}-{rep}_RPKM.bw",
+    output:
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bigwigCompare/{operation}/{reference_version}/{cycle}/{chip_library}-{rep}.bw"
+    shell:
+        """
+            bigwigCompare --bigwig1 {input.chip_library_bw}\
+                       --bigwig2 {input.wt_bw}\
+                       --outFileName {output.bigwig}\
+                       --numberOfProcessors {threads}\
+                       --operation {wildcards.operation}
+        """
 
+rule subtractOneSample:
+    input:
+      "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/G1/ACTR6G1-1.bw"
+
+rule runSubtractWT:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/G1/{library}-{rep}.bw",
+               library = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "YL1M"],
+               rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/M/{library}-{rep}.bw",
+               library = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "YL1G1"],
+               rep = ["1", "2"])
