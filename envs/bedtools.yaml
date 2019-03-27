@@ -1,0 +1,11 @@
+name: bedtools
+channels:
+  - r
+  - conda-forge
+  - defaults
+  - bioconda
+dependencies:
+  - bedtools=2.27.1
+  - libgcc-ng=8.2.0
+  - libstdcxx-ng=8.2.0
+  - zlib=1.2.11

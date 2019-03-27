@@ -46,4 +46,19 @@ rule merge_input:
                      -out {output.merged}
         """
 
+rule bamToBedpe:
+    version:
+        1
+    conda:
+        "envs/bedtools.yaml"
+    threads:
+        8
+    input:
+        bamFile = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam"
+    output:
+        bedFile = "{assayType}/{project}/{runID}/bedtools/bamToBedpe/{reference_version}/{library}.bedpe"
+    shell:
+        """
+            bedtools bamToBed -bedpe -i {input.bamFile} > {output.bedFile}
+        """
 
