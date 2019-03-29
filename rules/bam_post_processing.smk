@@ -62,3 +62,11 @@ rule bamToBedpe:
             bedtools bamToBed -bedpe -i {input.bamFile} > {output.bedFile}
         """
 
+rule convertAllBamToBedpe:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/bedtools/bamToBedpe/GRCh38_ensembl84/{library}-{rep}.bedpe",
+               library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+               rep = [1, 2]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/bedtools/bamToBedpe/GRCh38_ensembl84/{library}-{rep}.bedpe",
+               library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+               rep = [1, 2]), 
