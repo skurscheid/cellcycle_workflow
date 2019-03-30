@@ -38,10 +38,10 @@ rule macs2_callpeak:
         genomeSize = "hs",
         name = lambda wildcards: wildcards.chip_library
     input:
-        treatment_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam",
-        treatment_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam.bai",
-        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/INPUT{cycle}_{cycle}.bam",
-        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/INPUT{cycle}_{cycle}.bam.bai"
+        treatment_bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam",
+        treatment_index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam.bai",
+        control_bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam",
+        control_index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam.bai"
     output:
         outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{rep}")
     shell:
@@ -58,7 +58,7 @@ rule macs2_callpeak:
                            --tempdir tmp
         """
 
-rule macs2_callpeak:
+rule macs2_callpeak_combined_controls:
     conda:
         "../envs/macs2.yaml"
     version:
@@ -70,12 +70,16 @@ rule macs2_callpeak:
         genomeSize = "hs",
         name = lambda wildcards: wildcards.chip_library
     input:
-        treatment_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam",
-        treatment_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{chip_library}-{rep}.bam.bai",
-        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/INPUT{cycle}_{cycle}.bam",
-        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/INPUT{cycle}_{cycle}.bam.bai"
+        treatment_bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam",
+        treatment_index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam.bai",
+        control_bam = ["{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam", 
+                       "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/WT{cycle}-1.bam",
+                       "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/WT{cycle}-2.bam"],
+        control_index = ["{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam.bai",
+                         "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/WT{cycle}-1.bam.bai",
+                         "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/WT{cycle}-2.bam.bai"]
     output:
-        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{rep}")
+        outDir = directory("{assayType}/{project}/{runID}/macs2/callpeak_combined_controls/{reference_version}/{cycle}/{chip_library}-{rep}")
     shell:
         """
             macs2 callpeak -f {params.fileType}\
@@ -85,7 +89,15 @@ rule macs2_callpeak:
                            -n {params.name}\
                            --outdir {output.outDir}\
                            --call-summits\
-                           --bdg\
                            --qvalue {params.qvalCutoff}\
                            --tempdir tmp
         """
+
+rule run_macs2_callpeak_combined_controls:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/macs2/callpeak_combined_controls/GRCh38_ensembl84/G1/{chip_library}-{rep}",
+               chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+               rep = [1, 2]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/macs2/callpeak_combined_controls/GRCh38_ensembl84/M/{chip_library}-{rep}",
+               chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+               rep = [1, 2])
