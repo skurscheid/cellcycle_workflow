@@ -29,10 +29,10 @@ rule run_idr:
         "../envs/idr.yaml"
     params:
     input:
-        rep1 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-1/{chip_library}_peaks.narrowPeak",
-        rep2 = "{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-2/{chip_library}_peaks.narrowPeak"
+        rep1 = "{assayType}/{project}/{runID}/macs2/{command}/{reference_version}/{cycle}/{chip_library}-1/{chip_library}_peaks.narrowPeak",
+        rep2 = "{assayType}/{project}/{runID}/macs2/{command}/{reference_version}/{cycle}/{chip_library}-2/{chip_library}_peaks.narrowPeak"
     output: 
-        results = "{assayType}/{project}/{runID}/idr/pairwise/{reference_version}/{cycle}/{chip_library}_idr.narrowPeak"
+        results = "{assayType}/{project}/{runID}/idr/{command}/{reference_version}/{cycle}/{chip_library}_idr.narrowPeak"
     shell:
         """
             idr --samples {input.rep1} {input.rep2}\
@@ -54,12 +54,12 @@ rule extract_idr_peaks:
     input:
         idr_file = rules.run_idr.output.results
     output:
-        idr_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}_idr.bed",
-        other_peaks = "{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}_other.bed"
+        idr_peaks = "{assayType}/{project}/{runID}/idr/{command}/BEDs/{reference_version}/{cycle}/{chip_library}_idr.bed",
+        other_peaks = "{assayType}/{project}/{runID}/idr/{command}/BEDs/{reference_version}/{cycle}/{chip_library}_other.bed"
     script:
         "../scripts/extract_idr_peaks.py"
 
-rule bamCompare:
+rule bigWigCompare_vs_Input:
     version:
         1
     conda:
@@ -69,23 +69,19 @@ rule bamCompare:
         outFileFormat = "bigwig",
         binSize = 25,
         smoothLength = 50,
-        normalizeUsing = "RPKM",
     threads:
         8
     input:
-        chip_library_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam",
-        chip_library_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam.bai",
-        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
-        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
+        chip_bw = "{assayType}/{project}/{runID}/deepTools/bigwigCompare/subtract/{reference_version}/{cycle}/{chip_library}{cycle}-{rep}_RPKM.bw",
+        control_bw = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{cycle}/INPUT{cycle}_RPKM.bw"
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_log2.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip_library_bam}\
                        --bamfile2 {input.control_bam}\
                        --outFileName {output.bigwig}\
                        --outFileFormat bigwig\
-                       --normalizeUsingRPKM\
                        --ignoreForNormalization {params.ignore}\
                        --smoothLength {params.smoothLength}\
                        --binSize {params.binSize} \
@@ -105,10 +101,10 @@ rule compute_peaks_matrix_per_sample:
     input:
         idr_peaks = rules.extract_idr_peaks.output.idr_peaks,
         other_peaks = rules.extract_idr_peaks.output.other_peaks,
-        bigwig_file = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_RPKM.bw"
+        bigwig_file = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_log2.bw"
     output:
-        matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{chip_library}-{rep}.gz",
-        bed = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{reference_version}/{cycle}/{chip_library}-{rep}.bed",
+        matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{command}/{reference_version}/{cycle}/{chip_library}-{rep}.gz",
+        bed = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{command}/{reference_version}/{cycle}/{chip_library}-{rep}.bed",
     shell:
         """
             computeMatrix reference-point --scoreFileName {input.bigwig_file}\
@@ -131,7 +127,7 @@ rule plot_peaks_per_sample:
     input:
         matrix = rules.compute_peaks_matrix_per_sample.output.matrix
     output:
-        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}-{summaryPlotType}.pdf"
+        pdf = "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{command}/{reference_version}/{cycle}/{chip_library}-{rep}-{summaryPlotType}.pdf"
     shell:
         """
             plotHeatmap --matrixFile {input.matrix}\
@@ -141,27 +137,15 @@ rule plot_peaks_per_sample:
                         --perGroup
         """
 
-rule upload_plots:
-    version:
-         "1"
-    input:
-        rules.plot_peaks_per_sample.output.pdf
-    output:
-        AS.remote("experiment/{assayType}/{project}/{runID}/deepTools/plotHeatmap/{reference_version}/{cycle}/{chip_library}-{rep}-{summaryPlotType}.pdf")
-    run:
-        shell("mv {input} {output}")
-
-rule singleplot:
-    input:
-        AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/H2AZG1-1.pdf")
-
 rule allplots:
     input:
-         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/G1/{chip_library}-{rep}-{summaryPlotType}.pdf"),
+         expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{command}/GRCh38_ensembl84/G1/{chip_library}-{rep}-{summaryPlotType}.pdf",
+                command = "callpeak_combined_controls",
                 chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
                 rep = ["1", "2"],
                 summaryPlotType = "mean"),
-         expand( AS.remote("experiment/ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/GRCh38_ensembl84/M/{chip_library}-{rep}-{summaryPlotType}.pdf"),
+         expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{command}/GRCh38_ensembl84/M/{chip_library}-{rep}-{summaryPlotType}.pdf",
+                command = "callpeak_combined_controls",
                 chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
                 rep = ["1", "2"],
                 summaryPlotType = "mean")
