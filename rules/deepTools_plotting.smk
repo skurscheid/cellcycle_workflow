@@ -137,7 +137,7 @@ rule plotHeatmap:
         pdf =  "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.pdf"
     shell:
         """
-            plotProfile --matrixFile {input.matrix_gz}\
+            plotHeatmap --matrixFile {input.matrix_gz}\
                         --outFileName {output.pdf}\
                         --dpi {params.dpi}\
                         --averageTypeSummaryPlot {params.averageTypeSummaryPlot}\

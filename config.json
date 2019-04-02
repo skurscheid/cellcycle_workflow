@@ -180,7 +180,9 @@
         "GRCh38_ensembl84":
         {
           "allGenes": "/Data/References/Annotations/Homo_sapiens/GRCh38_ensembl84/allGenes.bed",
-          "LINEs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/LINEs_sample_50k.bed"
+          "LINEs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/LINEs_sample_50k.bed",
+          "LTRs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/LTRs_sample_50k.bed",
+          "SINEs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/SINEs_sample_50k.bed"
         }
       },
       "bamCoverage":
