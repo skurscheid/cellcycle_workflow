@@ -15,12 +15,10 @@ import os
 import fnmatch
 import snakemake
 from snakemake.exceptions import MissingInputException
-from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
 
 # setup Azure Storage for remote access
-account_key=os.environ['AZURE_KEY']
-account_name=os.environ['AZURE_ACCOUNT']
-AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
+#account_key=os.environ['AZURE_KEY']
+#account_name=os.environ['AZURE_ACCOUNT']
 
 # set local variables
 REF_GENOME = config["references"]["active"]

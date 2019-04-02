@@ -15,12 +15,6 @@ For use, include in your workflow.
 import os
 import fnmatch
 from snakemake.exceptions import MissingInputException
-from snakemake.remote.AzureStorage import RemoteProvider as AzureRemoteProvider
-
-# setup Azure Storage for remote access
-account_key=os.environ['AZURE_KEY']
-account_name=os.environ['AZURE_ACCOUNT']
-AS = AzureRemoteProvider(account_name=account_name, account_key=account_key)
 
 rule run_idr:
     version: 
@@ -65,26 +59,20 @@ rule bigWigCompare_vs_Input:
     conda:
         "../envs/deeptools.yaml"
     params:
-        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
         outFileFormat = "bigwig",
-        binSize = 25,
-        smoothLength = 50,
     threads:
         8
     input:
-        chip_bw = "{assayType}/{project}/{runID}/deepTools/bigwigCompare/subtract/{reference_version}/{cycle}/{chip_library}{cycle}-{rep}_RPKM.bw",
-        control_bw = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{cycle}/INPUT{cycle}_RPKM.bw"
+        chip_bw = "{assayType}/{project}/{runID}/deepTools/bigwigCompare/subtract/{reference_version}/{cycle}/{chip_library}-{rep}.bw",
+        control_bw = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/INPUT{cycle}_RPKM.bw"
     output:
         bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_log2.bw"
     shell:
         """
-            bamCompare --bamfile1 {input.chip_library_bam}\
-                       --bamfile2 {input.control_bam}\
+            bigwigCompare --bigwig1 {input.chip_bw}\
+                       --bigwig2 {input.control_bw}\
                        --outFileName {output.bigwig}\
                        --outFileFormat bigwig\
-                       --ignoreForNormalization {params.ignore}\
-                       --smoothLength {params.smoothLength}\
-                       --binSize {params.binSize} \
                        --numberOfProcessors {threads}
         """
 
@@ -141,11 +129,11 @@ rule allplots:
     input:
          expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{command}/GRCh38_ensembl84/G1/{chip_library}-{rep}-{summaryPlotType}.pdf",
                 command = "callpeak_combined_controls",
-                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                chip_library = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "YL1G1"], 
                 rep = ["1", "2"],
                 summaryPlotType = "mean"),
          expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{command}/GRCh38_ensembl84/M/{chip_library}-{rep}-{summaryPlotType}.pdf",
                 command = "callpeak_combined_controls",
-                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                chip_library = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "YL1M"],
                 rep = ["1", "2"],
                 summaryPlotType = "mean")

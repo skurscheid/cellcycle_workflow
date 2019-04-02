@@ -119,6 +119,32 @@ rule plotProfile:
                         --numPlotsPerRow {params.numPlotsPerRow}
         """
 
+rule plotHeatmap:
+    conda:
+        "../envs/deeptools.yaml"
+    version:
+        "1"
+    params:
+        dpi = 300,
+        averageTypeSummaryPlot = "mean",
+        plotTitle = "\"Mean coverage, scaled\"",
+        numPlotsPerRow = 4
+    threads:
+        1
+    input:
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz",
+    output:
+        pdf =  "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.pdf"
+    shell:
+        """
+            plotProfile --matrixFile {input.matrix_gz}\
+                        --outFileName {output.pdf}\
+                        --dpi {params.dpi}\
+                        --averageTypeSummaryPlot {params.averageTypeSummaryPlot}\
+                        --plotTitle {params.plotTitle}
+        """
+
+
 rule testPlot:
     input:
-        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotProfile/scale-regions/GRCh38_ensembl84/repeats/LINEs_sample_50k/matrix_RPKM.pdf"
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/scale-regions/GRCh38_ensembl84/repeats/LINEs_sample_50k/matrix_RPKM.pdf"

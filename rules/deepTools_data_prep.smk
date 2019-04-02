@@ -148,9 +148,9 @@ rule subtractOneSample:
 
 rule runSubtractWT:
     input:
-        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/G1/{library}-{rep}.bw",
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/M/{library}-{rep}.bw",
                library = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "YL1M"],
                rep = ["1", "2"]),
-        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/M/{library}-{rep}.bw",
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/G1/{library}-{rep}.bw",
                library = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "YL1G1"],
                rep = ["1", "2"])
