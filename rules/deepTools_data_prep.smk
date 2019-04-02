@@ -96,8 +96,7 @@ rule bamCompare:
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
         outFileFormat = "bigwig",
         binSize = 25,
-        smoothLength = 50,
-        normalizeUsing = "RPKM",
+        smoothLength = 50
     threads:
         8
     input:
@@ -106,14 +105,14 @@ rule bamCompare:
         control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
         control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
     output:
-        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_RPKM.bw"
+        bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{operation}/{reference_version}/{cycle}/{chip_library}-{rep}.bw"
     shell:
         """
             bamCompare --bamfile1 {input.chip_library_bam}\
                        --bamfile2 {input.control_bam}\
                        --outFileName {output.bigwig}\
                        --outFileFormat bigwig\
-                       --normalizeUsingRPKM\
+                       --operation {wildcards.operation}\
                        --ignoreForNormalization {params.ignore}\
                        --smoothLength {params.smoothLength}\
                        --binSize {params.binSize} \
@@ -154,3 +153,17 @@ rule runSubtractWT:
         expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bigwigCompare/subtract/GRCh38_ensembl84/G1/{library}-{rep}.bw",
                library = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "YL1G1"],
                rep = ["1", "2"])
+
+rule compareOneSample:
+    input:
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/G1/ACTR6G1-1.bw"
+
+rule runSubtractWT:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/M/{library}-{rep}.bw",
+               library = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "YL1M", "WTM"],
+               rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/G1/{library}-{rep}.bw",
+               library = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "YL1G1","WTG1"],
+               rep = ["1", "2"])
+
