@@ -33,7 +33,7 @@ def cli_parameters_normalization(wildcards):
         a = " ".join(("--normalizeTo1x", config["references"][REF_GENOME]["effectiveSize"]))
     return(a)
 
-def computeMatrix_cli_parameters(wildcards):
+def cli_parameters_computeMatrix(wildcards):
     params = config["program_parameters"]["deepTools"]["computeMatrix"][wildcards["subcommand"]][wildcards["region_type"]]
     return(params)
 
@@ -99,7 +99,7 @@ rule plotProfile:
     params:
         dpi = 300,
         averageType = "mean",
-        plotType = "mean",
+        plotType = "se",
         plotTitle = "\"Mean coverage, scaled\"",
         numPlotsPerRow = 4
     threads:
