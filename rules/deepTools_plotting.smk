@@ -33,52 +33,38 @@ def cli_parameters_normalization(wildcards):
         a = " ".join(("--normalizeTo1x", config["references"][REF_GENOME]["effectiveSize"]))
     return(a)
 
-def cli_parameters_bamCoverage(wildcards):
-    a = config["program_parameters"]["deepTools"]["bamCoverage"]["normal"]
-    b = str()
-    for (key, val) in a.items():
-        if val == " ":
-            f = key + " "
-            b = b + f
-        else:
-            f = key + "=" + val + " "
-            b = b + f
-    return(b.rstrip())
+def computeMatrix_cli_parameters(wildcards):
+    params = config["program_parameters"]["deepTools"]["computeMatrix"][wildcards["subcommand"]][wildcards["region_type"]]
+    return(params)
 
 rule computeMatrix_scaled:
+    conda:
+        "../envs/deeptools.yaml"
     version:
         "1"
     params:
-        deepTools_dir = home + config["program_parameters"]["deepTools"]["deepTools_dir"],
-        regionBodyLength = 5000,
-        beforeRegionStartLength = 2000,
-        afterRegionStartLength = 2000,
-        unscaled5prime = 350,
-        unscaled3prime = 350
+        cli_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
     threads:
         32
     input:
         file = get_computeMatrix_input,
         region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/scale-region/{reference_version}/{region}/matrix_{suffix}.gz"
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz"
     shell:
         """
-        {params.deepTools_dir}/computeMatrix scale-regions --numberOfProcessors {threads} \
-                                                           --smartLabels \
-                                                           --missingDataAsZero \
-                                                           --regionBodyLength {params.regionBodyLength} \
-                                                           --beforeRegionStartLength {params.beforeRegionStartLength} \
-                                                           --afterRegionStartLength {params.afterRegionStartLength} \
-                                                           --unscaled5prime {params.unscaled5prime} \
-                                                           --unscaled3prime {params.unscaled3prime} \
-                                                           --regionsFileName {input.region} \
-                                                           --scoreFileName {input.file} \
-                                                           --outFileName {output.matrix_gz}
+        computeMatrix scale-regions --numberOfProcessors {threads} \
+                                    --smartLabels \
+                                    --missingDataAsZero \
+                                    {params.cli_parameters}\
+                                    --regionsFileName {input.region} \
+                                    --scoreFileName {input.file} \
+                                    --outFileName {output.matrix_gz}
         """
 
-
 rule computeMatrix_refPoint:
+    conda:
+        "../envs/deeptools.yaml"
     version:
         "1"
     params:
@@ -91,7 +77,7 @@ rule computeMatrix_refPoint:
         file = get_computeMatrix_input,
         region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/reference-point/{reference_version}/{region}/matrix_{suffix}.gz"
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/reference-point/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz"
     shell:
         """
         {params.deepTools_dir}/computeMatrix reference-point --numberOfProcessors {threads} \
@@ -106,28 +92,33 @@ rule computeMatrix_refPoint:
 
 
 rule plotProfile:
+    conda:
+        "../envs/deeptools.yaml"
     version:
         "1"
     params:
-        deepTools_dir = home + config["program_parameters"]["deepTools"]["deepTools_dir"],
         dpi = 300,
         averageType = "mean",
-        plotType = "se",
-        plotTitle = "\"Mean coverage, all genes, scaled\"",
+        plotType = "mean",
+        plotTitle = "\"Mean coverage, scaled\"",
         numPlotsPerRow = 4
     threads:
         1
     input:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region}/matrix_{suffix}.gz",
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz",
     output:
-        pdf =  "{assayType}/{project}/{runID}/deepTools/plotProfile/{subcommand}/{reference_version}/{region}_{suffix}.pdf"
+        pdf =  "{assayType}/{project}/{runID}/deepTools/plotProfile/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.pdf"
     shell:
         """
-            {params.deepTools_dir}/plotProfile --matrixFile {input.matrix_gz}\
-                                               --outFileName {output.pdf}\
-                                               --dpi {params.dpi}\
-                                               --averageType {params.averageType}\
-                                               --plotType {params.plotType}\
-                                               --plotTitle {params.plotTitle}\
-                                               --numPlotsPerRow {params.numPlotsPerRow}
+            plotProfile --matrixFile {input.matrix_gz}\
+                        --outFileName {output.pdf}\
+                        --dpi {params.dpi}\
+                        --averageType {params.averageType}\
+                        --plotType {params.plotType}\
+                        --plotTitle {params.plotTitle}\
+                        --numPlotsPerRow {params.numPlotsPerRow}
         """
+
+rule testPlot:
+    input:
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotProfile/scale-regions/GRCh38_ensembl84/repeats/LINEs_sample_50k/matrix_RPKM.pdf"
