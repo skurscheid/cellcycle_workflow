@@ -38,30 +38,30 @@ def cli_parameters_computeMatrix(wildcards):
     params = config["program_parameters"]["deepTools"]["computeMatrix"][wildcards["subcommand"]][wildcards["region_type"]]
     return(params)
 
-rule computeMatrix_scaled:
-    conda:
-        "../envs/deeptools.yaml"
-    version:
-        "1"
-    params:
-        cli_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
-    threads:
-        32
-    input:
-        file = get_computeMatrix_input,
-        region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
-    output:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz"
-    shell:
-        """
-        computeMatrix scale-regions --numberOfProcessors {threads} \
-                                    --smartLabels \
-                                    --missingDataAsZero \
-                                    {params.cli_parameters}\
-                                    --regionsFileName {input.region} \
-                                    --scoreFileName {input.file} \
-                                    --outFileName {output.matrix_gz}
-        """
+# rule computeMatrix_scaled:
+#     conda:
+#         "../envs/deeptools.yaml"
+#     version:
+#         "1"
+#     params:
+#         cli_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
+#     threads:
+#         32
+#     input:
+#         file = get_computeMatrix_input,
+#         region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
+#     output:
+#         matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz"
+#     shell:
+#         """
+#         computeMatrix scale-regions --numberOfProcessors {threads} \
+#                                     --smartLabels \
+#                                     --missingDataAsZero \
+#                                     {params.cli_parameters}\
+#                                     --regionsFileName {input.region} \
+#                                     --scoreFileName {input.file} \
+#                                     --outFileName {output.matrix_gz}
+#         """
 
 rule computeMatrix_scaled_input_normalised:
     conda:
