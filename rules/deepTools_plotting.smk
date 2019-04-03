@@ -23,8 +23,9 @@ def get_computeMatrix_input(wildcards):
                      "bamCoverage",
                      wildcards["reference_version"]))
     for i in config["samples"][wildcards["assayType"]][wildcards["project"]][wildcards["runID"]].keys():
-        fn.append("/".join((path, "_".join((i, wildcards["suffix"] + ".bw")))))
+        fn.append("/".join((path, "_".join((i, wildcards["operation"] + ".bw")))))
     return(fn)
+
 
 def cli_parameters_normalization(wildcards):
     if wildcards["norm"] == "RPKM":
@@ -50,7 +51,7 @@ rule computeMatrix_scaled:
         file = get_computeMatrix_input,
         region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz"
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz"
     shell:
         """
         computeMatrix scale-regions --numberOfProcessors {threads} \
@@ -59,6 +60,34 @@ rule computeMatrix_scaled:
                                     {params.cli_parameters}\
                                     --regionsFileName {input.region} \
                                     --scoreFileName {input.file} \
+                                    --outFileName {output.matrix_gz}
+        """
+
+rule computeMatrix_scaled_input_normalised:
+    conda:
+        "../envs/deeptools.yaml"
+    version:
+        "1"
+    params:
+        cli_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
+    threads:
+        32
+    input:
+        M = lambda wildcards: expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCoverage/log2/GRCh38_ensembl84/M/{library}.bw",\
+                                        library = list(config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]]["M"]["ChIP"].values())),
+        G1 = lambda wildcards: expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCoverage/log2/GRCh38_ensembl84/G1/{library}.bw",\
+                                        library = list(config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]]["G1"]["ChIP"].values())),
+        region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
+    output:
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz"
+    shell:
+        """
+        computeMatrix scale-regions --numberOfProcessors {threads} \
+                                    --smartLabels \
+                                    --missingDataAsZero \
+                                    {params.cli_parameters}\
+                                    --regionsFileName {input.region} \
+                                    --scoreFileName {input.M} {input.G1) \
                                     --outFileName {output.matrix_gz}
         """
 
@@ -77,10 +106,10 @@ rule computeMatrix_refPoint:
         file = get_computeMatrix_input,
         region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/reference-point/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz"
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/reference-point/{reference_version}/{region_type}/{region}/matrix_{operation}.gz"
     shell:
         """
-        {params.deepTools_dir}/computeMatrix reference-point --numberOfProcessors {threads} \
+            computeMatrix reference-point --numberOfProcessors {threads} \
                                                              --smartLabels \
                                                              --missingDataAsZero \
                                                              --upstream {params.upstream} \
@@ -105,9 +134,9 @@ rule plotProfile:
     threads:
         1
     input:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz",
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz",
     output:
-        pdf =  "{assayType}/{project}/{runID}/deepTools/plotProfile/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.pdf"
+        pdf =  "{assayType}/{project}/{runID}/deepTools/plotProfile/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.pdf"
     shell:
         """
             plotProfile --matrixFile {input.matrix_gz}\
@@ -132,9 +161,9 @@ rule plotHeatmap:
     threads:
         1
     input:
-        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.gz",
+        matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz",
     output:
-        pdf =  "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{suffix}.pdf"
+        pdf =  "{assayType}/{project}/{runID}/deepTools/plotHeatmap/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.pdf"
     shell:
         """
             plotHeatmap --matrixFile {input.matrix_gz}\
@@ -147,4 +176,4 @@ rule plotHeatmap:
 
 rule testPlot:
     input:
-        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/scale-regions/GRCh38_ensembl84/repeats/LINEs_sample_50k/matrix_RPKM.pdf"
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/scale-regions/GRCh38_ensembl84/repeats/LINEs_sample_50k/matrix_log2.pdf"

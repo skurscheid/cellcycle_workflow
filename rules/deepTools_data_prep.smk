@@ -70,8 +70,8 @@ rule bamCoverage_normal:
     threads:
         32
     input:
-        bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{library}.bam",
-        index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{library}.bam.bai"
+        bam = "{assayType}/{project}/{runID}/samtools/down/{reference_version}/{cycle}/{library}.bam",
+        index = "{assayType}/{project}/{runID}/samtools/down/{reference_version}/{cycle}/{library}.bam.bai"
     output:
         bigwig = "{assayType}/{project}/{runID}/deepTools/bamCoverage/{reference_version}/{cycle}/{library}_RPKM.bw"
     shell:
@@ -100,10 +100,10 @@ rule bamCompare:
     threads:
         8
     input:
-        chip_library_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam",
-        chip_library_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/{chip_library}-{rep}.bam.bai",
-        control_bam = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam",
-        control_index = "{assayType}/{project}/{runID}/transfer/down/{reference_version}/{cycle}/INPUT{cycle}_{cycle}.bam.bai"
+        chip_library_bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam",
+        chip_library_index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{chip_library}-{rep}.bam.bai",
+        control_bam = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam",
+        control_index = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam.bai"
     output:
         bigwig = "{assayType}/{project}/{runID}/deepTools/bamCompare/{operation}/{reference_version}/{cycle}/{chip_library}-{rep}.bw"
     shell:
@@ -158,7 +158,7 @@ rule compareOneSample:
     input:
         "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/G1/ACTR6G1-1.bw"
 
-rule runSubtractWT:
+rule runCompareLog2:
     input:
         expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/M/{library}-{rep}.bw",
                library = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "YL1M", "WTM"],
