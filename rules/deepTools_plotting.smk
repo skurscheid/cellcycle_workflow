@@ -73,10 +73,12 @@ rule computeMatrix_scaled_input_normalised:
     threads:
         32
     input:
-        M = lambda wildcards: expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCoverage/log2/GRCh38_ensembl84/M/{library}.bw",\
-                                        library = list(config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]]["M"]["ChIP"].values())),
-        G1 = lambda wildcards: expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCoverage/log2/GRCh38_ensembl84/G1/{library}.bw",\
-                                        library = list(config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]]["G1"]["ChIP"].values())),
+        M = lambda wildcards: expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/M/{library}-{rep}.bw",
+                                      library = config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]]["M"]["ChIP"].keys(),
+                                      rep = ["1", "2"]),
+        G1 = lambda wildcards: expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/bamCompare/log2/GRCh38_ensembl84/G1/{library}-{rep}.bw",
+                                      library = config["samples"][wildcards["assayType"]]["conditions"][wildcards["runID"]]["G1"]["ChIP"].keys(),
+                                      rep = ["1", "2"]),
         region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
         matrix_gz = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{subcommand}/{reference_version}/{region_type}/{region}/matrix_{operation}.gz"
