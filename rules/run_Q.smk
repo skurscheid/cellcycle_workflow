@@ -29,7 +29,8 @@ rule perform_q_peak_calling:
         outdir = directory("{assayType}/{project}/{runID}/Q/callpeak/{reference_version}/{cycle}/{library}-{rep}")
     shell:
       """
-        /home/sebastian/Bioinformatics/Q/bin/Q --treatment-sample {input.chip}\
+        if [ ! -d {output.outdir} ]; then mkdir -p {output.outdir}; fi &&\
+        /home/skurscheid/Bioinformatics/Q/bin/Q --treatment-sample {input.chip}\
                                                 --control-sample {input.input}\
                                                 --out-prefix {output.outdir}/{wildcards.library}-{wildcards.rep}\
                                                 --thread-num {threads}\
