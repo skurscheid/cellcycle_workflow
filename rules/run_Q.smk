@@ -26,15 +26,15 @@ rule perform_q_peak_calling:
         chip = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}-{rep}.bam",
         input = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/INPUT{cycle}_{cycle}.bam"
     output:
-        outdir = directory("{assayType}/{project}/{runID}/Q/callpeak/{reference_version}/{cycle}/{library}-{rep}/")
+        outdir = directory("{assayType}/{project}/{runID}/Q/callpeak/{reference_version}/{cycle}/{library}-{rep}")
     shell:
-    """
-        /home/skurscheid/Bioinformatics/Q/bin/Q --treatment-sample {input.chip}\
+      """
+        /home/sebastian/Bioinformatics/Q/bin/Q --treatment-sample {input.chip}\
                                                 --control-sample {input.input}\
-                                                --out-prefix {output.outdir}{wildcards.library}-{wildcards.rep}\
+                                                --out-prefix {output.outdir}/{wildcards.library}-{wildcards.rep}\
                                                 --thread-num {threads}\
                                                 --p-value-cutoff {params.cutoff}
-    """
+      """
 
 rule run_q_all:
     input:
