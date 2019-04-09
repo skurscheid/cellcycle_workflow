@@ -30,7 +30,7 @@ rule perform_q_peak_calling:
     shell:
       """
         if [ ! -d {output.outdir} ]; then mkdir -p {output.outdir}; fi &&\
-        /home/skurscheid/Bioinformatics/Q/bin/Q --treatment-sample {input.chip}\
+        /home/sebastian/Bioinformatics/Q/bin/Q --treatment-sample {input.chip}\
                                                 --control-sample {input.input}\
                                                 --out-prefix {output.outdir}/{wildcards.library}-{wildcards.rep}\
                                                 --thread-num {threads}\
