@@ -26,16 +26,16 @@ rule run_fastp:
     conda:
         "../envs/fastp.yaml"
     version:
-        "1.2"
+        "2"
     threads:
         4
     input:
-        read1 = lambda wildcards: dataDir + wildcards["assayType"] + "/" + wildcards["project"] + "/" + wildcards["runID"] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards["project"]][wildcards["runID"]][wildcards["library"]][0],
-        read2 = lambda wildcards: dataDir + wildcards["assayType"] + "/" + wildcards["project"] + "/" + wildcards["runID"] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards["project"]][wildcards["runID"]][wildcards["library"]][1]
+        read1 = lambda wildcards: wildcards["assayType"] + "/" + wildcards["projec] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards[]][wildcards["library"]][0],
+        read2 = lambda wildcards: wildcards["assayType"] + "/" + wildcards["projec] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards[]][wildcards["library"]][1]
     output:
-        trimmed_read1 = dataDir + "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end1.fastq.gz",
-        trimmed_read2 = dataDir + "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end2.fastq.gz",
-        report_html = dataDir + "{assayType}/{project}/{runID}/fastp/report/{library}.fastp.html",
-        report_json = dataDir + "{assayType}/{project}/{runID}/fastp/report/{library}.fastp.json"
+        trimmed_read1 = "fastp/trimmed/{library}.end1.fastq.gz",
+        trimmed_read2 = "fastp/trimmed/{library}.end2.fastq.gz",
+        report_html = "fastp/report/{library}.fastp.html",
+        report_json = "fastp/report/{library}.fastp.json"
     shell:
         "fastp -i {input.read1} -I {input.read2} -o {output.trimmed_read1} -O {output.trimmed_read2} --html {output.report_html} --json {output.report_json} --thread {threads}"
