@@ -60,7 +60,7 @@ rule run_idr_Q:
 
 rule extract_idr_peaks:
     version:
-        "1"
+        "2"
     conda:
         "../envs/pandas.yaml"
     params:
@@ -99,7 +99,7 @@ rule bigWigCompare_vs_Input:
 
 rule compute_peaks_matrix_per_sample:
     version:
-        "1"
+        "2"
     conda:
         "../envs/deeptools.yaml"
     params:
@@ -109,7 +109,7 @@ rule compute_peaks_matrix_per_sample:
         8
     input:
         idr_peaks = rules.extract_idr_peaks.output.idr_peaks,
-        other_peaks = rules.extract_idr_peaks.output.other_peaks,
+        #other_peaks = rules.extract_idr_peaks.output.other_peaks,
         bigwig_file = "{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{cycle}/{chip_library}-{rep}_log2.bw"
     output:
         matrix = "{assayType}/{project}/{runID}/deepTools/computeMatrix/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}-{rep}.gz",
@@ -117,7 +117,7 @@ rule compute_peaks_matrix_per_sample:
     shell:
         """
             computeMatrix reference-point --scoreFileName {input.bigwig_file}\
-                                          --regionsFileName {input.idr_peaks} {input.other_peaks}\
+                                          --regionsFileName {input.idr_peaks}\
                                           --outFileName {output.matrix}\
                                           --outFileSortedRegions {output.bed}\
                                           --referencePoint center\
