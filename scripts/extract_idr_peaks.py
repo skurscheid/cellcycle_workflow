@@ -13,15 +13,17 @@ def writeToBed(df, selected_columns, output):
 
 def run_script():
     try:
-        df = pd.read_csv(idr_file, sep="\t", header = None, names = ["chrom", "chromStart", "chromEnd", "name", "score", "strand",
-                                                             "signalValue", "p-value", "q-value", "summit", "localIDR", "globalIDR",
-                                                             "rep1_chromStart", "rep1_chromEnd", "rep1_signalValue", "rep1_summit",
-                                                             "rep2_chromStart", "rep2_chromEnd", "rep2_signalValue", "rep2_summit"])
+        df = pd.read_csv(idr_file, sep="\t", header = None, 
+                         names = ["chrom", "chromStart", "chromEnd", "name", "score", "strand",
+                                  "signalValue", "p-value", "q-value", "summit", "localIDR", "globalIDR",
+                                  "rep1_chromStart", "rep1_chromEnd", "rep1_signalValue", "rep1_summit",
+                                  "rep2_chromStart", "rep2_chromEnd", "rep2_signalValue", "rep2_summit"],
+                         low_memory = False)
         
         other = df[(df['signalValue'] >= signal_value) & (df['globalIDR'] <= idr_cutoff)]
         idr = df[df["globalIDR"] > idr_cutoff]
-        writeToBed(other, selected_columns, other_peaks)
-        writeToBed(idr, selected_columns, idr_peaks)
+        if len(other) > 0: writeToBed(other, selected_columns, other_peaks)
+        if len(idr) > 0: writeToBed(idr, selected_columns, idr_peaks)
     except Exception as e:
         print(e)
 
