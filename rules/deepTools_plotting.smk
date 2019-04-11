@@ -89,7 +89,7 @@ rule computeMatrix_scaled_input_normalised:
                                     --missingDataAsZero \
                                     {params.cli_parameters}\
                                     --regionsFileName {input.region} \
-                                    --scoreFileName {input.M} {input.G1) \
+                                    --scoreFileName {input.M} {input.G1} \
                                     --outFileName {output.matrix_gz}
         """
 

@@ -70,7 +70,7 @@ rule extract_idr_peaks:
         idr_file = "{assayType}/{project}/{runID}/idr/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}_idr.narrowPeak"
     output:
         idr_peaks = "{assayType}/{project}/{runID}/idr/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}_idr.bed",
-        other_peaks = "{assayType}/{project}/{runID}/idr/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}_other.bed"
+#        other_peaks = "{assayType}/{project}/{runID}/idr/{peacaller}/{command}/{reference_version}/{cycle}/{chip_library}_other.bed"
     script:
         "../scripts/extract_idr_peaks.py"
 
