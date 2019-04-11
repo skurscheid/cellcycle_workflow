@@ -44,8 +44,8 @@ rule run_idr_Q:
         "../envs/idr.yaml"
     params:
     input:
-        rep1 = "{assayType}/{project}/{runID}/Q/{command}/{reference_version}/{cycle}/{chip_library}-1/{chip_library}-Q-narrowPeak.bed",
-        rep2 = "{assayType}/{project}/{runID}/Q/{command}/{reference_version}/{cycle}/{chip_library}-2/{chip_library}-Q-narrowPeak.bed"
+        rep1 = "{assayType}/{project}/{runID}/Q/{command}/{reference_version}/{cycle}/{chip_library}-1/{chip_library}-1-Q-narrowPeak.bed",
+        rep2 = "{assayType}/{project}/{runID}/Q/{command}/{reference_version}/{cycle}/{chip_library}-2/{chip_library}-2-Q-narrowPeak.bed"
     output: 
         results = "{assayType}/{project}/{runID}/idr/Q/{command}/{reference_version}/{cycle}/{chip_library}_idr.narrowPeak"
     shell:
@@ -67,10 +67,10 @@ rule extract_idr_peaks:
         globalIDRCutoff = 1,
         signalValue = 5
     input:
-        idr_file = rules.run_idr.output.results
+        idr_file = "{assayType}/{project}/{runID}/idr/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}_idr.narrowPeak"
     output:
         idr_peaks = "{assayType}/{project}/{runID}/idr/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}_idr.bed",
-        other_peaks = "{assayType}/{project}/{runID}/idr/{peacaller}/{command}/{reference_version}/{cycle}/{chip_library}_other.bed"
+        other_peaks = "{assayType}/{project}/{runID}/idr/{peakcaller}/{command}/{reference_version}/{cycle}/{chip_library}_other.bed"
     script:
         "../scripts/extract_idr_peaks.py"
 
