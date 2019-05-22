@@ -178,4 +178,4 @@ rule plotHeatmap:
 
 rule testPlot:
     input:
-        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/scale-regions/GRCh38_ensembl84/repeats/LINEs_sample_50k/matrix_log2.pdf"
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/scale-regions/GRCh38_ensembl84/repeats/Alpha_satellites/matrix_log2.pdf"
