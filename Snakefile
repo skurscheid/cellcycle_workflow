@@ -74,11 +74,11 @@ rule all_peaks_per_sample:
                    chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
                    rep = ["1", "2"])
 
+rule test_multimap:
+    input:
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/REF_VERSION/H2AZM-1_mm.bam.bai"
 
 include_prefix = "./rules/"
 include:
-      include_prefix + "azure_rules.smk"
-include:
-      include_prefix + "run_macs2.smk"
-include:
-      include_prefix + "run_idr.smk"
+    include_prefix + "run_alignment.smk"
+

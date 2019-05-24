@@ -1,108 +1,68 @@
 {
     "__default__" :
     {
-        "queue" : "all.q, hugemem.q",
-        "virtual_free" : "48G",
-        "h_vmem" : "48.1G",
-        "threads" : 2,
-        "std1_out_dir" : "/home/skurscheid/qsub_output",
-        "error_out_dir" : "/home/skurscheid/qsub_error"
+        "P" : "pb97",
+        "queue" : "biodev",
+        "mem" : "32G",
+        "ncpus" : 16,
+        "std1_out_dir" : "/home/150/sxk150/qsub_output",
+        "error_out_dir" : "/home/150/sxk150/qsub_error",
+        "M" : "skurscheid@gmail.com",
+        "m" : "abe",
     },
-    "macs2_callpeak" :
+    "md5check" :
     {
-      "queue" : "all.q, hugemem.q",
-      "virtual_free" : "32G",
-      "h_vmem" : "32.1G",
-      "threads" : 1
+        "mem" : "1024M",
+        "ncpus" : 1,
+        "walltime": "23:59:00",
     },
-    "run_rnaseq_qc" :
+    "decompress" : 
     {
-      "virtual_free" : "48G",
-      "h_vmem" : "48.1G",
-      "threads" : 2
+        "mem" : "1024M",
+        "ncpus" : 4,
+        "walltime": "01:00:00",
+        "name" : "{rule}.{wildcards.library}"
     },
-    "collect_insert_size_metrics" :
+    "qc_and_trim" : 
     {
-      "virtual_free" : "48G",
-      "h_vmem" : "48.1G",
-      "threads" : 2
+        "mem" : "2048M",
+        "ncpus" : 4,
+        "walltime": "00:30:00",
+        "name" : "{rule}.{wildcards.library}"
     },
-    "run_htseq_count" :
+    "bam_index" :
     {
-        "queue" : "all.q,hugemem.q",
-        "virtual_free" : "24",
-        "h_vmem" : "24.1G",
-        "threads" : 1
+        "mem" : "8G",
+        "ncpus" : 1,
+        "walltime": "01:00:00",
+        "name" : "{rule}.{wildcards.library}"
     },
-    "fastqc" :
+    "bam_mark_duplicates" : 
     {
-        "virtual_free" : "48G",
-        "h_vmem" : "48.1G",
-        "threads" : 4
+        "mem" : "32G",
+        "ncpus" : 8,
+        "walltime": "04:00:00",
+        "name" : "{rule}.{wildcards.library}"
     },
-    "star_align" :
+    "bam_quality_filter" : 
     {
-      "virtual_free" : "48G",
-      "h_vmem" : "48.1G",
-      "threads" : 4
+        "mem" : "8G",
+        "ncpus" : 1,
+        "walltime": "04:00:00",
+        "name" : "{rule}.{wildcards.library}"
     },
-    "star_align_full" :
+    "bam_sort" : 
     {
-      "virtual_free" : "48G",
-      "h_vmem" : "48.1G",
-      "threads" : 8
+        "mem" : "32G",
+        "ncpus" : 16,
+        "walltime": "04:00:00",
+        "name" : "{rule}.{wildcards.library}"
     },
-    "run_rMats" :
-    {
-      "virtual_free" : "48G",
-      "h_vmem" : "48.1G",
-      "threads" : 1
-    },
-    "kallisto_quant" :
-    {
-        "virtual_free" : "48G",
-        "h_vmem" : "48.1G",
-        "threads" : 4
-    },
-    "kallisto_quant_pseudobam" :
-    {
-        "virtual_free" : "48G",
-        "h_vmem" : "48.1G",
-        "threads" : 5
-    },
-    "tophat_align" :
-    {
-        "virtual_free" : "48G",
-        "h_vmem" : "48.1G",
-        "threads" : 4
-    },
-    "bowtie2_pe" :
-    {
-        "threads" : 8
-    },
-    "bam_mark_duplicates" :
-    {
-        "virtual_free" : "48G",
-        "threads" : 1
-    },
-    "multiBamSummary" :
-    {
-        "virtual_free" : "48G",
-        "threads" : 12
-    },
-    "plotFingerprint" :
-    {
-        "virtual_free" : "48G",
-        "threads" : 8
-    },
-    "bamCompare" :
-    {
-        "virtual_free" : "48G",
-        "threads" : 8
-    },
-    "bamCoverage_MNase" :
-    {
-        "virtual_free" : "48G",
-        "threads" : 8
+    "bowtie2_pe_multimap" : 
+    {        
+        "mem" : "32G",
+        "ncpus" : 16,
+        "walltime": "08:00:00",
+        "name" : "{rule}.{wildcards.library}"
     }
 }

@@ -13,11 +13,11 @@
       "version": ["GRCh38_ensembl84"],
       "genome":
       {
-        "GRCh38_ensembl84": "/Data/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/*.fa"
+        "GRCh38_ensembl84": "/short/kv78/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/*.fa"
       },
       "bowtie2":
       {
-        "GRCh38_ensembl84": "/Data/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/hg38_ensembl84"
+        "GRCh38_ensembl84": "/short/kv78/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/hg38_ensembl84"
       }
     }
   },
@@ -144,7 +144,7 @@
   "bt2_params":
   {
       "max_insert": ["500"],
-      "threads": ["7"],
+      "threads": ["15"],
       "platform": ["Illumina"]
   },
   "bt2_params_unmapped_reads":
@@ -274,11 +274,6 @@
       "igvtools" :
       {
         "igvtools_bin" : "/miniconda3/envs/igv/bin/igvtools"
-      },
-      "bowtie2":
-      {
-        "threads": "8",
-        "max_insert": "500"
       }
     },
   "trim_dir": "trimmed_data",

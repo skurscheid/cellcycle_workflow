@@ -29,7 +29,7 @@ dependencies:
   - samtools=1.9
   - setuptools=41.0.1
   - sqlite=3.28.0
-  - tbb=2019.4
+  - tbb=2019.5
   - tk=8.6.9
   - wheel=0.33.4
   - xz=5.2.4

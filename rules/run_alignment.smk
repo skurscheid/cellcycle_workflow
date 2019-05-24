@@ -69,7 +69,7 @@ rule bowtie2_pe_multimap:
         trimmed_read1 = "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end1.fastq.gz",
         trimmed_read2 = "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end2.fastq.gz"
     output:
-        temp("{assayType}/{project}/{runID}/bowtie2/align_multi/{reference_version}/{library}_mm.bam")
+        temp("{assayType}/{project}/{runID}/bowtie2/{reference_version}/{library}_mm.bam")
     shell:
         """
             bowtie2 \
@@ -78,7 +78,7 @@ rule bowtie2_pe_multimap:
             --no-discordant \
             --maxins {params.max_in} \
             --threads {threads}\
-            -k 15\
+            -k 5\
             --rg-id '{wildcards.library}' \
             --rg 'LB:{wildcards.library}' \
             --rg 'SM:{wildcards.library}' \
@@ -96,7 +96,7 @@ rule bam_stats:
     version:
         "1"
     input:
-        "{assayType}/{project}/{runID}/bowtie2/{command}/{reference_version}/{library}_{suffix}.bam"
+        "{assayType}/{project}/{runID}/bowtie2/{reference_version}/{library}_{suffix}.bam"
     output:
         "{assayType}/{project}/{runID}/samtools/flagstat/{reference_version}/{library}_{suffix}.bam.stats.txt"
     shell:
@@ -114,7 +114,7 @@ rule bam_quality_filter:
     params:
         qual = config["alignment_quality"]
     input:
-        "{assayType}/{project}/{runID}/bowtie2/{command}/{reference_version}/{library}_{suffix}.bam"
+        "{assayType}/{project}/{runID}/bowtie2/{reference_version}/{library}_{suffix}.bam"
     output:
         temp("{assayType}/{project}/{runID}/samtools/quality_filtered/{reference_version}/{library}_{suffix}.bam")
     shell:
