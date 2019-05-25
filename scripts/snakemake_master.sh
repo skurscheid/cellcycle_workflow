@@ -13,8 +13,8 @@
 
 source ~/.bashrc
 
-/short/rl2/miniconda3/envs/snakemake/bin/snakemake -s /home/150/sxk150/cellcycle_workflow/Snakefile test_multimap\
-        --configfile /home/150/sxk150/cellcycle_workflow/config.json\
+/short/rl2/miniconda3/envs/snakemake/bin/snakemake -s /short/kv78/cellcycle_workflow/Snakefile test_multimap\
+        --configfile /short/kv78/cellcycle_workflow/config.json\
         --use-conda\
         --jobs 32\
         -d /short/kv78/cellcycle\
@@ -28,7 +28,7 @@ source ~/.bashrc
                     -l walltime={cluster.walltime}\
                     -e {cluster.error_out_dir} \
                     -o {cluster.std1_out_dir}" \
-        --cluster-config /home/150/sxk150/cellcycle_workflow/cluster.json\
+        --cluster-config /short/kv78/cellcycle_workflow/cluster.json\
         --rerun-incomplete
 
 

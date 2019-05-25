@@ -151,7 +151,9 @@ rule bam_mark_duplicates:
     params:
         qual = config["alignment_quality"],
         picard = home + config["program_parameters"]["picard_tools"]["jar"],
-        temp = home + config["temp_dir"]
+        temp = config["temp_dir"]
+    threads:
+        1
     benchmark:
         "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_mark_duplicates_times.tsv"
     input:
@@ -161,11 +163,12 @@ rule bam_mark_duplicates:
         metrics = "{assayType}/{project}/{runID}/picardTools/MarkDuplicates/{library}_{suffix}.metrics.txt"
     shell:
         """
-            picard MarkDuplicates\
+            picard -Djava.io.tmpdir={params.temp} MarkDuplicates\
             INPUT={input}\
             OUTPUT={output.out}\
             ASSUME_SORTED=TRUE\
             REMOVE_DUPLICATES=TRUE\
+            CREATE_INDEX=TRUE\
             METRICS_FILE={output.metrics}
         """
 
@@ -184,18 +187,6 @@ rule bam_sortn:
         "{assayType}/{project}/{runID}/samtools/sortn/{library}_{suffix}.bam"
     shell:
         "samtools sort -n -@ {threads} {input} -T {wildcards.library}.sorted -o {output}"
-
-rule bam_index:
-    conda:
-        "../envs/bam.yaml"
-    benchmark:
-        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_index_times.tsv"
-    input:
-        rules.bam_mark_duplicates.output
-    output:
-        "{assayType}/{project}/{runID}/picardTools/MarkDuplicates/{library}_{suffix}.bam.bai"
-    shell:
-        "samtools index {input} {output}"
 
 rule bam_insert_size:
     conda:

@@ -280,7 +280,7 @@
   "processed_dir": "processed_data",
   "aligned_dir": "aligned_data",
   "reports_dir": "reports",
-  "temp_dir": "/short/kv78/temp",
+  "temp_dir": "/short/kv78/tmp",
   "alignment_quality": "13",
   "raw_dir": "fastq",
   "cutadapt_dir": "/miniconda3/envs/snakemake/bin",
