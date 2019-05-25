@@ -23,8 +23,6 @@ localrules:
 
 home = os.environ['HOME']
 
-rule all_multimap:
-
 rule all_callpeaks:
     input:
         expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{suffix}",
@@ -76,27 +74,23 @@ rule all_peaks_per_sample:
 
 rule all_multimap:
     input:
-        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{reference_version}/{chip_library}-{rep}_mm.bam",
-                reference_version = REF_VERSION,
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{chip_library}-{rep}_mm.bam",
                 chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
                 rep = ["1", "2"]),
-        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{reference_version}/{chip_library}-{rep}_mm.bam",
-                reference_version = REF_VERSION,
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{chip_library}-{rep}_mm.bam",
                 chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                rep = ["1", "2"])
-        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{reference_version}/{input_library}-{rep}_mm.bam",
-                reference_version = REF_VERSION,
-                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["Input"].keys()],
                 rep = ["1", "2"]),
-        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{reference_version}/{input_library}-{rep}_mm.bam",
-                reference_version = REF_VERSION,
-                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["Input"].keys()],
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{input_library}-{rep}_mm.bam",
+                input_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["Input"].keys()],
+                rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{input_library}-{rep}_mm.bam",
+                input_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["Input"].keys()],
                 rep = ["1", "2"])
 
 
 rule test_multimap:
     input:
-        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/REF_VERSION/H2AZM-1_mm.bam.bai"
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/H2AZM-1_mm.bam.bai"
 
 include_prefix = "./rules/"
 include:

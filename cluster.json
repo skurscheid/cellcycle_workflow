@@ -40,7 +40,7 @@
     "bam_mark_duplicates" : 
     {
         "mem" : "32G",
-        "ncpus" : 8,
+        "ncpus" : {rule}.{wildcards.threads},
         "walltime": "04:00:00",
         "name" : "{rule}.{wildcards.library}"
     },
