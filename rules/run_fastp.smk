@@ -30,8 +30,8 @@ rule run_fastp:
     threads:
         4
     input:
-        read1 = lambda wildcards: wildcards["assayType"] + "/" + wildcards["projec] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards[]][wildcards["library"]][0],
-        read2 = lambda wildcards: wildcards["assayType"] + "/" + wildcards["projec] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards[]][wildcards["library"]][1]
+        read1 = lambda wildcards: wildcards["assayType"] + "/" + wildcards["project] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards[]][wildcards["library"]][0],
+        read2 = lambda wildcards: wildcards["assayType"] + "/" + wildcards["project] + "/raw_data/" + config["samples"][wildcards["assayType"]][wildcards[]][wildcards["library"]][1]
     output:
         trimmed_read1 = "fastp/trimmed/{library}.end1.fastq.gz",
         trimmed_read2 = "fastp/trimmed/{library}.end2.fastq.gz",
