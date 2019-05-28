@@ -4,7 +4,7 @@ def chip_replicates(wildcards):
         fn.append("/".join([wildcards["assayType"],
                             wildcards["project"],
                             wildcards["runID"],
-                            "picardTools/MarkDuplicates",
+                            "samtools/sortn",
                             i + "_" + wildcards["suffix"] + ".bam"]))
     return(fn)
 
@@ -15,6 +15,6 @@ def input_replicates(wildcards):
             fn.append("/".join([wildcards["assayType"],
                                 wildcards["project"],
                                 wildcards["runID"],
-                                "picardTools/MarkDuplicates",
+                                "samtools/sortn",
                                 j + "_" + wildcards["suffix"] + ".bam"]))
     return(fn)
