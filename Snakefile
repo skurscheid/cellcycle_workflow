@@ -23,6 +23,12 @@ localrules:
 
 home = os.environ['HOME']
 
+# include external python functions
+include:
+        "./scripts/common/input_functions.py"
+include:
+        "./scripts/common/parameter_functions.py"
+
 rule all_callpeaks:
     input:
         expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{suffix}",
@@ -91,6 +97,10 @@ rule all_multimap:
 rule test_multimap:
     input:
         "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/H2AZM-1_mm.bam"
+
+rule test_genrich:
+    input:
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/genrich/G1/H2AZG1_mm.narrowPeaks"
 
 include_prefix = "./rules/"
 include:
