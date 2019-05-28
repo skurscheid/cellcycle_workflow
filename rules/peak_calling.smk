@@ -9,7 +9,7 @@ rule genrich:
         genrich_path = "/short/kv78/software/Genrich",
         Ns_file = "/short/kv78/References/Genomes/Homo_sapiens/GRCh38_ensembl84/primary/Homo_sapiens.GRCh38.dna.primary_assembly.Ns.bed",
         min_auc = 10,
-        max_q_val = 0.1,
+        max_qval = 0.1,
         additional_cli = genrich_parameters
     benchmark:
         "{assayType}/{project}/{runID}/benchmarks/genrich/{cycle}/{sample}_{suffix}_times.tsv"
@@ -26,7 +26,7 @@ rule genrich:
                                           -E {params.Ns_file}\
                                           -a {params.min_auc}\
                                           -q {params.max_qval}\
-                                          -t {input.chip}\
-                                          -c {input.input}\
+                                          -t {input.chip[0]},{input.chip[1]}\
+                                          -c {input.input[0]},{input.input[1]}\
                                           -o {output} 1>>{log} 2>>{log}
         """

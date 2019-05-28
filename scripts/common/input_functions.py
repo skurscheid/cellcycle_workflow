@@ -5,7 +5,7 @@ def chip_replicates(wildcards):
                             wildcards["project"],
                             wildcards["runID"],
                             "picardTools/MarkDuplicates",
-                            i + wildcards["suffix"] + ".bam"]))
+                            i + "_" + wildcards["suffix"] + ".bam"]))
     return(fn)
 
 def input_replicates(wildcards):
@@ -16,5 +16,5 @@ def input_replicates(wildcards):
                                 wildcards["project"],
                                 wildcards["runID"],
                                 "picardTools/MarkDuplicates",
-                                j + wildcards["suffix"] + ".bam"]))
+                                j + "_" + wildcards["suffix"] + ".bam"]))
     return(fn)

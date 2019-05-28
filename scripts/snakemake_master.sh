@@ -13,7 +13,7 @@
 
 source ~/.bashrc
 
-/short/rl2/miniconda3/envs/snakemake/bin/snakemake -s /short/kv78/cellcycle_workflow/Snakefile all_multimap\
+/short/rl2/miniconda3/envs/snakemake/bin/snakemake -s /short/kv78/cellcycle_workflow/Snakefile test_genrich\
         --configfile /short/kv78/cellcycle_workflow/config.json\
         --use-conda\
         --jobs 32\

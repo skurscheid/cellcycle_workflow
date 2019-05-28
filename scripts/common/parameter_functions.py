@@ -1,3 +1,3 @@
 def genrich_parameters(wildcards):
     if wildcards["suffix"] == "mm":
-        return "-s"
+        return "-s 20"

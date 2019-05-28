@@ -64,5 +64,12 @@
         "ncpus" : 16,
         "walltime": "08:00:00",
         "name" : "{rule}.{wildcards.library}"
+    },
+    "genrich" :
+    {
+        "mem" : "32G",
+        "ncpus" : 1,
+        "walltime": "08:00:00",
+        "name" : "{rule}.{wildcards.sample}"
     }
 }

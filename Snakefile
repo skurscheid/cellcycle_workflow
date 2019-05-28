@@ -105,4 +105,6 @@ rule test_genrich:
 include_prefix = "./rules/"
 include:
     include_prefix + "run_alignment.smk"
+include:
+    include_prefix + "peak_calling.smk"
 
