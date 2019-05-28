@@ -58,6 +58,13 @@
         "walltime": "04:00:00",
         "name" : "{rule}.{wildcards.library}"
     },
+    "bam_sortn" : 
+    {
+        "mem" : "32G",
+        "ncpus" : 4,
+        "walltime": "04:00:00",
+        "name" : "{rule}.{wildcards.library}"
+    },
     "bowtie2_pe_multimap" : 
     {        
         "mem" : "32G",
