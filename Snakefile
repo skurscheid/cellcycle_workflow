@@ -93,6 +93,12 @@ rule all_multimap:
                 input_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["Input"].keys()],
                 rep = ["1", "2"])
 
+rule all_genrich:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/genrich/G1/{sample}_mm.narrowPeaks",
+                sample = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/genrich/M/{sample}_mm.narrowPeaks",
+                sample = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()])
 
 rule test_multimap:
     input:
