@@ -96,7 +96,7 @@ rule all_multimap:
 
 rule test_multimap:
     input:
-        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/H2AZM-1_mm.bam"
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/H2AZM-2_mm.bam"
 
 rule test_genrich:
     input:

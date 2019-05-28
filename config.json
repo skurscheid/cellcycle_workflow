@@ -281,7 +281,7 @@
   "aligned_dir": "aligned_data",
   "reports_dir": "reports",
   "temp_dir": "/short/kv78/tmp",
-  "alignment_quality": "13",
+  "alignment_quality": "10",
   "raw_dir": "fastq",
   "cutadapt_dir": "/miniconda3/envs/snakemake/bin",
   "HTSeq_dir": "/miniconda3/envs/py27/bin",
