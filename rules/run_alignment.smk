@@ -186,7 +186,7 @@ rule bam_sortn:
     output:
         "{assayType}/{project}/{runID}/samtools/sortn/{library}_{suffix}.bam"
     shell:
-        "samtools sort -n -@ {threads} {input} -T {wildcards.library}.sorted -o {output}"
+        "samtools sort -n -@ {threads} {input[0]} -T {wildcards.library}.sorted -o {output}"
 
 rule bam_insert_size:
     conda:
