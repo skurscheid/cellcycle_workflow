@@ -31,9 +31,8 @@ rule merge_input:
     version:
         1
     conda:
-        "envs/bamtools.yaml"
+        "../envs/bamtools.yaml"
     params:
-        conditions = config["samples"]["conditions"] 
     threads:
         8
     input:
@@ -46,4 +45,33 @@ rule merge_input:
                      -out {output.merged}
         """
 
+rule bamToBedpe:
+    version:
+        1
+    conda:
+        "../envs/bedtools.yaml"
+    threads:
+        1
+    input:
+        bamFile = "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam"
+    output:
+        bedFile = "{assayType}/{project}/{runID}/bedtools/bamToBedpe/{reference_version}/{library}.bedpe"
+    shell:
+        """
+            bedtools bamtobed -bedpe -i {input.bamFile} > {output.bedFile}
+        """
 
+rule convertAllBamToBedpe:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/bedtools/bamToBedpe/GRCh38_ensembl84/{library}-{rep}.bedpe",
+               library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+               rep = [1, 2]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/bedtools/bamToBedpe/GRCh38_ensembl84/{library}-{rep}.bedpe",
+               library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+               rep = [1, 2]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/bedtools/bamToBedpe/GRCh38_ensembl84/{library}-{rep}.bedpe",
+               library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["Input"].keys()],
+               rep = [1, 2]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/bedtools/bamToBedpe/GRCh38_ensembl84/{library}-{rep}.bedpe",
+               library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["Input"].keys()],
+               rep = [1, 2])

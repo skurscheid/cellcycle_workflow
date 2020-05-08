@@ -13,11 +13,11 @@
       "version": ["GRCh38_ensembl84"],
       "genome":
       {
-        "GRCh38_ensembl84": "/Data/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/*.fa"
+        "GRCh38_ensembl84": "/short/kv78/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/*.fa"
       },
       "bowtie2":
       {
-        "GRCh38_ensembl84": "/Data/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/hg38_ensembl84"
+        "GRCh38_ensembl84": "/short/kv78/References/Genomes/Homo_sapiens/GRCh38_ensembl84/canonical/index/hg38_ensembl84"
       }
     }
   },
@@ -144,7 +144,7 @@
   "bt2_params":
   {
       "max_insert": ["500"],
-      "threads": ["7"],
+      "threads": ["15"],
       "platform": ["Illumina"]
   },
   "bt2_params_unmapped_reads":
@@ -179,7 +179,11 @@
         },
         "GRCh38_ensembl84":
         {
-          "allGenes": "/Data/References/Annotations/Homo_sapiens/GRCh38_ensembl84/allGenes.bed"
+          "allGenes": "/Data/References/Annotations/Homo_sapiens/GRCh38_ensembl84/allGenes.bed",
+          "LINEs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/LINEs_sample_50k.bed",
+          "LTRs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/LTRs_sample_50k.bed",
+          "SINEs_sample_50k": "/home/sebastian/Data/Tremethick/CellCycle/annotations/SINEs_sample_50k.bed",
+          "Alpha_satellites" : "/home/sebastian/Data/Tremethick/CellCycle/annotations/Alpha_satellites.bed"
         }
       },
       "bamCoverage":
@@ -237,6 +241,14 @@
             "--regionBodyLength": "20000",
             "--unscaled5prime": "0",
             "--unscaled3prime": "0"
+          },
+          "repeats":
+          {
+            "--upstream": "500",
+            "--downstream": "500",
+            "--regionBodyLength": "5000",
+            "--unscaled5prime": "150",
+            "--unscaled3prime": "150"
           }
         },
         "reference-point":
@@ -262,18 +274,13 @@
       "igvtools" :
       {
         "igvtools_bin" : "/miniconda3/envs/igv/bin/igvtools"
-      },
-      "bowtie2":
-      {
-        "threads": "8",
-        "max_insert": "500"
       }
     },
   "trim_dir": "trimmed_data",
   "processed_dir": "processed_data",
   "aligned_dir": "aligned_data",
   "reports_dir": "reports",
-  "temp_dir": "/temp_data",
+  "temp_dir": "/short/kv78/tmp",
   "alignment_quality": "10",
   "raw_dir": "fastq",
   "cutadapt_dir": "/miniconda3/envs/snakemake/bin",

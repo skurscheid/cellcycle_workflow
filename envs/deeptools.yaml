@@ -1,7 +1,7 @@
 channels:
  - bioconda
 dependencies:
- - deeptools=2.3.5
+ - deeptools=3.2.0
  - matplotlib >=1.4.0
  - numpy >=1.9.0
  - pybigwig >=0.2.3

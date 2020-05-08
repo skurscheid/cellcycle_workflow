@@ -23,6 +23,8 @@ REF_VERSION = config["references"][REF_GENOME]["version"][0]
 
 
 rule bowtie2_pe:
+    conda:
+        "../envs/bam.yaml"
     version:
         "1"
     params:
@@ -34,7 +36,7 @@ rule bowtie2_pe:
         trimmed_read1 = "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end1.fastq.gz",
         trimmed_read2 = "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end2.fastq.gz"
     output:
-        temp("{assayType}/{project}/{runID}/bowtie2/{reference_version}/{library}.bam")
+        temp("{assayType}/{project}/{runID}/bowtie2/{library}_pe.bam")
     shell:
         """
             bowtie2 \
@@ -53,14 +55,54 @@ rule bowtie2_pe:
             | samtools view -Sb - > {output}
         """
 
-
-rule bam_stats:
+rule bowtie2_pe_multimap:
+    conda:
+        "../envs/bam.yaml"
     version:
         "1"
+    params:
+        max_in = config["program_parameters"]["bt2_params"]["max_insert"],
+        bt2_index = config["references"][REF_GENOME]["bowtie2"][REF_VERSION]
+    threads:
+        lambda wildcards: int(str(config["program_parameters"]["bt2_params"]["threads"]).strip("['']"))
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_mm_bowtie2_pe_multimap_times.tsv"
     input:
-        rules.bowtie2_pe.output
+        trimmed_read1 = "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end1.fastq.gz",
+        trimmed_read2 = "{assayType}/{project}/{runID}/fastp/trimmed/{library}.end2.fastq.gz"
     output:
-        "{assayType}/{project}/{runID}/samtools/flagstat/{reference_version}/{library}.bam.stats.txt"
+        temp("{assayType}/{project}/{runID}/bowtie2/{library}_mm.bam")
+    shell:
+        """
+            bowtie2 \
+            -x {params.bt2_index}\
+            --no-mixed \
+            --no-discordant \
+            --maxins {params.max_in} \
+            --threads {threads}\
+            -k 5\
+            --rg-id '{wildcards.library}' \
+            --rg 'LB:{wildcards.library}' \
+            --rg 'SM:{wildcards.library}' \
+            --rg 'PL:Illumina' \
+            --rg 'PU:NA' \
+            -1 {input.trimmed_read1} \
+            -2 {input.trimmed_read2} \
+            | samtools view -Sb - > {output}
+        """
+
+
+rule bam_stats:
+    conda:
+        "../envs/bam.yaml"
+    version:
+        "1"
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_stats_times.tsv"
+    input:
+        "{assayType}/{project}/{runID}/bowtie2/{library}_{suffix}.bam"
+    output:
+        "{assayType}/{project}/{runID}/samtools/flagstat/{library}_{suffix}.bam.stats.txt"
     shell:
         """
             samtools flagstat {input} > {output}
@@ -69,91 +111,101 @@ rule bam_stats:
 
 # rules
 rule bam_quality_filter:
+    conda:
+        "../envs/bam.yaml"
     version:
         "1.0"
     params:
         qual = config["alignment_quality"]
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_quality_filter_times.tsv"
     input:
-        rules.bowtie2_pe.output
+        "{assayType}/{project}/{runID}/bowtie2/{library}_{suffix}.bam"
     output:
-        temp("{assayType}/{project}/{runID}/samtools/quality_filtered/{reference_version}/{library}.bam")
+        temp("{assayType}/{project}/{runID}/samtools/quality_filtered/{library}_{suffix}.bam")
     shell:
         "samtools view -b -h -q {params.qual} {input} > {output}"
 
 
 rule bam_sort:
+    conda:
+        "../envs/bam.yaml"
     version:
         "1.0"
     threads:
         4
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_sort_times.tsv"
     input:
         rules.bam_quality_filter.output
     output:
-        temp("{assayType}/{project}/{runID}/samtools/sort/{reference_version}/{library}.bam")
+        temp("{assayType}/{project}/{runID}/samtools/sort/{library}_{suffix}.bam")
     shell:
         "samtools sort -@ {threads} {input} -T {wildcards.library}.sorted -o {output}"
 
-
 rule bam_mark_duplicates:
+    conda:
+        "../envs/bam.yaml"
     version:
         "1.0"
     params:
         qual = config["alignment_quality"],
         picard = home + config["program_parameters"]["picard_tools"]["jar"],
-        temp = home + config["temp_dir"]
+        temp = config["temp_dir"]
+    threads:
+        1
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_mark_duplicates_times.tsv"
     input:
         rules.bam_sort.output
     output:
-        out= temp("{assayType}/{project}/{runID}/picardTools/MarkDuplicates/{reference_version}/{library}.bam"),
-        metrics = "{assayType}/{project}/{runID}/picardTools/MarkDuplicates/{reference_version}/{library}.metrics.txt"
+        out= "{assayType}/{project}/{runID}/picardTools/MarkDuplicates/{library}_{suffix}.bam",
+        metrics = "{assayType}/{project}/{runID}/picardTools/MarkDuplicates/{library}_{suffix}.metrics.txt"
     shell:
         """
-            java -Djava.io.tmpdir={params.temp} \
-            -Xmx24G \
-            -jar {params.picard} MarkDuplicates \
+            picard -Djava.io.tmpdir={params.temp} MarkDuplicates\
             INPUT={input}\
             OUTPUT={output.out}\
             ASSUME_SORTED=TRUE\
+            REMOVE_DUPLICATES=TRUE\
+            CREATE_INDEX=TRUE\
             METRICS_FILE={output.metrics}
         """
 
-
-rule bam_rmdup:
+rule bam_sortn:
+    conda:
+        "../envs/bam.yaml"
+    version:
+        "1.0"
+    threads:
+        4
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_sortn_times.tsv"
     input:
-        rules.bam_mark_duplicates.output.out
+        rules.bam_mark_duplicates.output
     output:
-        "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam"
+        "{assayType}/{project}/{runID}/samtools/sortn/{library}_{suffix}.bam"
     shell:
-        "samtools rmdup {input} {output}"
-
-
-rule bam_index:
-    params:
-        qual = config["alignment_quality"]
-    input:
-        rules.bam_rmdup.output
-    output:
-        "{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam.bai"
-    shell:
-        "samtools index {input} {output}"
-
+        "samtools sort -n -@ {threads} {input[0]} -T {wildcards.library}.sorted -o {output}"
 
 rule bam_insert_size:
+    conda:
+        "../envs/bam.yaml"
     version:
         "1.0"
     params:
         picard = home + config["program_parameters"]["picard_tools"]["jar"],
         temp = home + config["temp_dir"]
+    benchmark:
+        "{assayType}/{project}/{runID}/benchmarks/{library}_{suffix}_bam_insert_size_times.tsv"
     input:
-        rules.bam_rmdup.output
+        rules.bam_mark_duplicates.output
     output:
-        metrics = "{assayType}/{project}/{runID}/picardTools/CollectInsertSizeMetrics/{reference_version}/{library}.insert_size_metrics.txt",
-        histogram = "{assayType}/{project}/{runID}/picardTools/CollectInsertSizeMetrics/{reference_version}/{library}.histogram.pdf"
+        metrics = "{assayType}/{project}/{runID}/picardTools/CollectInsertSizeMetrics/{library}_{suffix}.insert_size_metrics.txt",
+        histogram = "{assayType}/{project}/{runID}/picardTools/CollectInsertSizeMetrics/{library}_{suffix}.histogram.pdf"
     shell:
         """
-            java -Djava.io.tmpdir={params.temp} \
-            -Xmx24G \
-            -jar {params.picard} CollectInsertSizeMetrics \
+            picard CollectInsertSizeMetrics \
             INPUT={input}\
             OUTPUT={output.metrics}\
             H={output.histogram}

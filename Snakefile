@@ -11,145 +11,106 @@ RUN_ID = "N08851_SK_LR1807201_SEQ"
 PROJECT_ID = "LR1807201"
 ASSAY_TYPE = "ChIP-Seq"
 
-#singularity: "docker://skurscheid/snakemake_baseimage:0.1"
-singularity: "docker://continuumio/miniconda3:4.4.10"
+wildcard_constraints:
+    chip_library = ".*?(?=\_)"
 
 rule:
     version:
         "1.0"
 
 localrules:
-        all
+       all
 
 home = os.environ['HOME']
 
-include_prefix = "rules/"
-
-#include:
-#    include_prefix + "run_fastp.smk"
-#include:
-#    include_prefix + "run_alignment.smk"
-#include:
-#    include_prefix + "deepTools_QC.smk"
-#include:
-#    include_prefix + "deepTools_plotting.smk"
-#include:
-#    include_prefix + "deepTools_data_prep.smk"
+# include external python functions
 include:
-      include_prefix + "run_macs2.smk"
+        "./scripts/common/input_functions.py"
+include:
+        "./scripts/common/parameter_functions.py"
 
-rule execute_collectInsertSize:
+rule all_callpeaks:
     input:
-        expand("{assayType}/picardTools/CollectInsertSizeMetrics/{reference_version}/{runID}/{library}.{suffix}",
-                assayType = "ChIP-Seq",
-                reference_version = REF_VERSION,
-                project = "LR1807201",
-                runID = "N08851_SK_LR1807201_SEQ",
-                library = [x for x in config["samples"]["ChIP-Seq"]["LR1807201"]["N08851_SK_LR1807201_SEQ"].keys()],
-                suffix = ["histogram.pdf", "insert_size_metrics.txt"])
-
-rule execute_fastp:
-    input:
-        expand("{assayType}/{project}/{runID}/fastp/trimmed/{library}.{suffix}",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               reference_version = REF_VERSION,
-               runID = RUN_ID,
-               library = [x for x in config["samples"]["ChIP-Seq"]["LR1807201"]["N08851_SK_LR1807201_SEQ"].keys()],
-	           suffix = ["end1.fastq.gz", "end2.fastq.gz"]),
-        expand("{assayType}/{project}/{runID}/fastp/report/{library}.{suffix}",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               reference_version = REF_VERSION,
-               runID = RUN_ID,
-               library = [x for x in config["samples"]["ChIP-Seq"]["LR1807201"]["N08851_SK_LR1807201_SEQ"].keys()],
-	           suffix = ["fastp.html", "fastp.json"])
-
-rule execute_deepTools_QC:
-    input:
-        expand("{assayType}/{project}/{runID}/deepTools/plotFingerprint/{reference_version}/{condition}/fingerprints.png",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               runID = RUN_ID,
-               reference_version = REF_VERSION,
-               condition = ["G1", "M"]),
-        expand("{assayType}/{project}/{runID}/deepTools/bamPEFragmentSize/{reference_version}/{condition}/histogram.png",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               runID = RUN_ID,
-               reference_version = REF_VERSION,
-               condition = ["G1", "M"]),
-        expand("{assayType}/{project}/{runID}/deepTools/plotPCA/{reference_version}/{condition}/PCA_readCounts.png",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               runID = RUN_ID,
-               reference_version = REF_VERSION,
-               condition = ["G1", "M"]),
-        expand("{assayType}/{project}/{runID}/deepTools/plotCorrelation/{reference_version}/{condition}/heatmap_SpearmanCorr_readCounts.{suffix}",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               runID = RUN_ID,
-               reference_version = REF_VERSION,
-               condition = ["G1", "M"],
-               suffix = ["png", "tab"])
-
-rule execute_deepTools_data_prep:
-    input:
-        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{input}_{condition}_RPKM.bw",
-               assayType = ASSAY_TYPE,
-               project = PROJECT_ID,
-               runID = RUN_ID,
-               reference_version = REF_VERSION,
-               chip = ["ACTR6M", "ANP32M", "H2AM", "H2AZM", "TIP60M", "WTM", "YL1M"],
-               replicate = ["1", "2"],
-               input = "InputG1_G1",
-               condition = "M"),
-        expand("{assayType}/{project}/{runID}/deepTools/bamCompare/{reference_version}/{chip}-{replicate}_vs_{input}_{condition}_RPKM.bw",
-               assayType = ASSAY_TYPE,
-               project = PROJECT_ID,
-               runID = RUN_ID,
-               reference_version = REF_VERSION,
-               chip = ["ACTR6G1", "ANP32G1", "H2AG1", "H2AZG1", "TIP60G1", "WTG1", "YL1G1"],
-               replicate = ["1", "2"],
-               input = "InputM_M",
-               condition = "G1")
-        
-
-rule execute_deepTools_plotting:
-    input:
-        expand("{assayType}/{project}/{runID}/deepTools/plotProfile/{subcommand}/{reference_version}/{region}_{suffix}.pdf",
-               assayType = "ChIP-Seq",
-               project = PROJECT_ID,
-               reference_version = REF_VERSION,
-               runID = RUN_ID,
-               subcommand = "scale-region",
-               region = ["allGenes"],
-	       suffix = "RPKM")
-
-rule callpeaks:
-    input:
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}",
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["G1"],
-                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
-		rep = ["1", "2"]),
-        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{treatment}-{rep}",
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                suffix = ["1", "2"]),
+        expand("{assayType}/{project}/{runID}/macs2/callpeak/{reference_version}/{cycle}/{chip_library}-{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
                 cycle = ["M"],
-                treatment = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
-                rep = ["1", "2"])
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                suffix = ["1", "2"])
 
-rule all:
+rule all_idr:
     input:
-        expand("{assayType}/{project}/{runID}/samtools/rmdup/{reference_version}/{library}.bam.bai",
+        expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}/{chip_library}_{suffix}",
                 assayType = "ChIP-Seq",
                 reference_version = REF_VERSION,
                 project = "LR1807201",
                 runID = "N08851_SK_LR1807201_SEQ",
-                library = [x for x in config["samples"]["ChIP-Seq"]["LR1807201"]["N08851_SK_LR1807201_SEQ"].keys()])
+                cycle = ["G1"],
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                suffix = ["idr.bed", "other.bed"]),
+        expand("{assayType}/{project}/{runID}/idr/BEDs/{reference_version}/{cycle}/{chip_library}/{chip_library}_{suffix}",
+                assayType = "ChIP-Seq",
+                reference_version = REF_VERSION,
+                project = "LR1807201",
+                runID = "N08851_SK_LR1807201_SEQ",
+                cycle = ["M"],
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                suffix = ["idr.bed", "other.bed"])
+
+rule all_peaks_per_sample:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{reference_version}/G1/{chip_library}-{rep}.pdf",
+                reference_version = REF_VERSION,
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/deepTools/plotHeatmap/{reference_version}/M/{chip_library}-{rep}.pdf",
+                reference_version = REF_VERSION,
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                rep = ["1", "2"])
+
+rule all_multimap:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{chip_library}-{rep}_mm.bam",
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()],
+                rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{chip_library}-{rep}_mm.bam",
+                chip_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()],
+                rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{input_library}-{rep}_mm.bam",
+                input_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["Input"].keys()],
+                rep = ["1", "2"]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/{input_library}-{rep}_mm.bam",
+                input_library = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["Input"].keys()],
+                rep = ["1", "2"])
+
+rule all_genrich:
+    input:
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/genrich/G1/{sample}_mm.narrowPeaks",
+                sample = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["G1"]["ChIP"].keys()]),
+        expand("ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/genrich/M/{sample}_mm.narrowPeaks",
+                sample = [x for x in config["samples"]["ChIP-Seq"]["conditions"]["N08851_SK_LR1807201_SEQ"]["M"]["ChIP"].keys()])
+
+rule test_multimap:
+    input:
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/picardTools/MarkDuplicates/H2AZM-2_mm.bam"
+
+rule test_genrich:
+    input:
+        "ChIP-Seq/LR1807201/N08851_SK_LR1807201_SEQ/genrich/G1/H2AZG1_mm.narrowPeaks"
+
+include_prefix = "./rules/"
+include:
+    include_prefix + "run_alignment.smk"
+include:
+    include_prefix + "peak_calling.smk"
+

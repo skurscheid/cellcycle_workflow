@@ -1,11 +1,23 @@
+name: samtools
 channels:
- - bioconda
+  - conda-forge
+  - bioconda
+  - defaults
 dependencies:
- - samtools=1.9
- - zlib >=1.2.11,<1.3.0a0
- - bzip2 >=1.0.6,<2.0a0
- - curl >=7.59.0,<8.0a0
- - libdeflate >=1.0,<1.1.0a0
- - libgcc-ng >=4.9
- - ncurses >=6.1,<6.2.0a0
- - xz >=5.2.4,<5.3.0a0
+  - bzip2=1.0.6
+  - ca-certificates=2019.3.9
+  - curl=7.64.0
+  - krb5=1.16.3
+  - libcurl=7.64.0
+  - libdeflate=1.0
+  - libedit=3.1.20170329
+  - libgcc-ng=7.3.0
+  - libssh2=1.8.0
+  - libstdcxx-ng=7.3.0
+  - ncurses=6.1
+  - openssl=1.1.1b
+  - samtools=1.9
+  - tk=8.6.9
+  - xz=5.2.4
+  - zlib=1.2.11
+prefix: /home/skurscheid/miniconda3/envs/samtools
